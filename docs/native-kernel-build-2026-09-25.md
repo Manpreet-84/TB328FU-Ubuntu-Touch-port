@@ -26,5 +26,23 @@ Diagnostic image size: `29,048,832` bytes; partition limit:
 `67,108,864` bytes. Header-v4 unpack verification confirmed exact kernel and
 `TB328FU_OWN_KERNEL_V2_REACHED_INIT` marker.
 
-No device partition was written. Before any slot-B test, back up live `boot_b`,
-hash it, confirm bootloader fastboot and current slot, then re-check rollback.
+At build completion no device partition had been written. Test proceeded only
+after backing up and hashing live `boot_b` and confirming bootloader fastboot.
+
+## Slot-B result
+
+Live `boot_b` was backed up at 67,108,864 bytes. Its SHA-256 was
+`7cd0dfb12a9508c0a90cc882d33140230c78b24744ae438363d9f41ad8e526f8`,
+identical to V96. Diagnostic image was flashed only to `boot_b`; `boot_a`
+remained the rollback slot.
+
+Slot B stopped at Lenovo logo. No USB device enumerated. After restoring V96
+to `boot_a`, Ubuntu booted on slot A. Both pstore and the cache-partition marker
+were empty, proving diagnostic `/init` did not execute. V96 and diagnostic both
+use Android boot header v4 with signature size zero, so missing v4 signature is
+not the cause.
+
+Failure boundary is before initramfs: bootloader-to-kernel handoff, early kernel
+startup, or incompatible board DT/clock/power assumptions. Next test must add an
+earlier kernel-side proof or use a closer TB328FU 5.4.233 source; userspace and
+Wi-Fi suspend work cannot be tested with this donor yet.

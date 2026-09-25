@@ -243,6 +243,13 @@ or promise a full Ubuntu UI.
 
 See [`docs/slot-b-kernel-test-plan.md`](docs/slot-b-kernel-test-plan.md).
 
+The first isolated slot-B donor test completed on 2026-09-25. It stopped at the
+Lenovo logo with no USB enumeration. Recovery to V96 slot A succeeded after
+reflashing the verified image. Pstore contained no record and the diagnostic
+cache marker was absent, so initramfs `/init` never ran. Boot header version and
+v4 signature size match V96. Current boundary is pre-userspace: early donor
+kernel/board-DT compatibility or bootloader handoff.
+
 ## Sensor facts
 
 Lenovo specifies accelerometer, ambient light, Hall-cover and proximity sensors.
