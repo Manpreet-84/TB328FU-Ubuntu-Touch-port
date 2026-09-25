@@ -1,0 +1,11 @@
+[Unit]
+Description=Block deep suspend until TB328FU Wi-Fi resume is fixed
+After=NetworkManager.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/systemd-inhibit --what=sleep --who=TB328FU-port --why=SC2355-WiFi-resume-broken --mode=block /bin/sleep infinity
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

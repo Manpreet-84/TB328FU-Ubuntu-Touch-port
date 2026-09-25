@@ -1,0 +1,14 @@
+#!/bin/sh
+set -eu
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: tb328fu-play VIDEO [VIDEO ...]" >&2
+    exit 2
+fi
+
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+export GST_PLUGIN_FEATURE_RANK=amcviddec-c2unisocavcdecoder:0,openh264dec:3000
+
+exec /home/phablet/media-fix/gst-apps/usr/bin/gst-play-1.0 \
+    --videosink=waylandsink --audiosink=pulsesink "$@"

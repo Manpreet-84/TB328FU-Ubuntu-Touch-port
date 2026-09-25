@@ -1,0 +1,8 @@
+[Unit]
+Description=TB328FU responsive video recording patch
+After=graphical.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh /etc/writable/tb328fu-camera/apply-video-only.sh
+RemainAfterExit=yes

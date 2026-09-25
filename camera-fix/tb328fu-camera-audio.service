@@ -1,0 +1,12 @@
+[Unit]
+Description=TB328FU Camera microphone mux bridge
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /etc/writable/tb328fu-camera/record-audio-bridge.py
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=default.target

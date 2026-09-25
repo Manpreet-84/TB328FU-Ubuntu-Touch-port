@@ -1,0 +1,65 @@
+diff --git a/drivers/block/zram/hybridswap/zram_drv.h b/drivers/block/zram/hybridswap/zram_drv.h
+index 3b25c9ed1..f85d4bf5b 100755
+--- a/drivers/block/zram/hybridswap/zram_drv.h
++++ b/drivers/block/zram/hybridswap/zram_drv.h
+@@ -130,10 +130,12 @@ struct zram {
+ #ifdef CONFIG_ZRAM_MEMORY_TRACKING
+ 	struct dentry *debugfs_dir;
+ #endif
+-#if (defined CONFIG_ZRAM_WRITEBACK) || (defined CONFIG_HYBRIDSWAP_CORE)
++#if defined(CONFIG_HYBRIDSWAP_CORE) && !defined(CONFIG_ZRAM_WRITEBACK)
+ 	struct block_device *bdev;
+ 	unsigned int old_block_size;
+ 	unsigned long nr_pages;
++#endif
++#if defined(CONFIG_ZRAM_WRITEBACK) || defined(CONFIG_HYBRIDSWAP_CORE)
+ 	unsigned long increase_nr_pages;
+ #endif
+ #ifdef CONFIG_HYBRIDSWAP_CORE
+diff --git a/drivers/block/zram/hybridswap/zram_drv_internal.h b/drivers/block/zram/hybridswap/zram_drv_internal.h
+index a0746122f..c26a3a99e 100644
+--- a/drivers/block/zram/hybridswap/zram_drv_internal.h
++++ b/drivers/block/zram/hybridswap/zram_drv_internal.h
+@@ -23,7 +23,7 @@
+ 
+ #define zram_clear_flag(zram, index, flag) (zram->table[index].flags &= ~BIT(flag))
+ 
+-#define zram_set_element(zram, index, element) (zram->table[index].element = element)
++#define zram_set_element(zram, index, value) (zram->table[index].element = value)
+ 
+ #define zram_get_obj_size(zram, index) (zram->table[index].flags & (BIT(ZRAM_FLAG_SHIFT) - 1))
+ 
+diff --git a/drivers/usb/musb/musb_sprd.c b/drivers/usb/musb/musb_sprd.c
+index 2f4e19ecc..2b8725b35 100755
+--- a/drivers/usb/musb/musb_sprd.c
++++ b/drivers/usb/musb/musb_sprd.c
+@@ -108,8 +108,15 @@ int dwc3_sprd_probe_finish(void)
+ }
+ #endif
+ 
+-extern bool oplus_get_bc12_done_sprd(void);
+-extern int oplus_get_charger_type_sprd(void);
++bool __weak oplus_get_bc12_done_sprd(void)
++{
++	return true;
++}
++
++int __weak oplus_get_charger_type_sprd(void)
++{
++	return POWER_SUPPLY_TYPE_USB;
++}
+ static void musb_sprd_release_all_request(struct musb *musb);
+ static void sprd_musb_enable(struct musb *musb)
+ {
+@@ -539,7 +546,9 @@ static struct musb_hdrc_config sprd_musb_hdrc_config_single = {
+ };
+ #pragma GCC diagnostic pop
+ 
+-extern void tp_charge_status_switch(int status);
++void __weak tp_charge_status_switch(int status)
++{
++}
+ 
+ static int musb_sprd_vbus_notifier(struct notifier_block *nb,
+ 				unsigned long event, void *data)
+

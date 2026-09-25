@@ -1,0 +1,24 @@
+# TB328FU Halium 12 minimum config delta.
+# Merge only after identifying the exact Lenovo kernel source and defconfig.
+
+CONFIG_DEVTMPFS=y
+CONFIG_DEVTMPFS_MOUNT=y
+CONFIG_VT=y
+CONFIG_SYSVIPC=y
+CONFIG_FHANDLE=y
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_TMPFS_XATTR=y
+CONFIG_PID_NS=y
+CONFIG_IPC_NS=y
+CONFIG_CGROUP_DEVICE=y
+CONFIG_MMC_SDHCI_SPRD=y
+CONFIG_MMC_HSQ=y
+CONFIG_MMC_SWCQ=y
+# CONFIG_STATIC_USERMODEHELPER is not set
+
+# AppArmor remains a source-level task. Do not enable these until the selected
+# 5.4 tree contains the required Android/Ubuntu AppArmor implementation.
+# CONFIG_SECURITY_APPARMOR=y
+# CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
+# CONFIG_DEFAULT_SECURITY_APPARMOR=y
+

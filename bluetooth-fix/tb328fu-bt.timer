@@ -1,0 +1,10 @@
+[Unit]
+Description=Delayed TB328FU Bluetooth initialization
+
+[Timer]
+OnBootSec=2min
+AccuracySec=5s
+Unit=tb328fu-bt.service
+
+[Install]
+WantedBy=timers.target

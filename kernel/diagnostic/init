@@ -1,0 +1,67 @@
+#!/bin/sh
+
+PATH=/bin:/sbin
+export PATH
+
+mkdir -p /proc /sys /dev /run /mnt/cache /sys/fs/pstore /sys/kernel/config
+mount -t proc proc /proc 2>/dev/null || true
+mount -t sysfs sysfs /sys 2>/dev/null || true
+mount -t devtmpfs devtmpfs /dev 2>/dev/null || true
+mount -t pstore pstore /sys/fs/pstore 2>/dev/null || true
+mount -t configfs configfs /sys/kernel/config 2>/dev/null || true
+
+# Lenovo's stock kernel has no devtmpfs; these fallback nodes also make the
+# stock-kernel control image exercise exactly the same initramfs.
+[ -e /dev/null ] || mknod /dev/null c 1 3
+[ -e /dev/kmsg ] || mknod /dev/kmsg c 1 11
+[ -e /dev/console ] || mknod /dev/console c 5 1
+[ -e /dev/mmcblk0p53 ] || mknod /dev/mmcblk0p53 b 259 46
+[ -e /dev/pmsg0 ] || mknod /dev/pmsg0 c 252 0
+
+marker=TB328FU_OWN_KERNEL_V2_REACHED_INIT
+echo "$marker" >/dev/pmsg0 2>/dev/null || true
+{
+    echo "$marker"
+    echo "uname=$(uname -a)"
+    echo "cmdline=$(cat /proc/cmdline 2>/dev/null)"
+    echo "model=$(cat /proc/device-tree/model 2>/dev/null)"
+} >/dev/kmsg 2>/dev/null || true
+
+# Independent success signal 1: preserve the marker on Lenovo's cache
+# partition. This never touches userdata, super, vendor or firmware.
+for second in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    [ -b /dev/mmcblk0p53 ] && break
+    sleep 1
+done
+if mount -t ext4 /dev/mmcblk0p53 /mnt/cache 2>/dev/null; then
+    echo "$marker" >/mnt/cache/tb328fu-own-kernel-v2.txt
+    sync
+    umount /mnt/cache
+fi
+
+# Independent success signal 2: expose an ACM serial gadget to the host.
+g=/sys/kernel/config/usb_gadget/tb328fu_diag
+mkdir -p "$g/strings/0x409" "$g/configs/c.1/strings/0x409"
+echo 0x1782 >"$g/idVendor" 2>/dev/null || true
+echo 0x4d00 >"$g/idProduct" 2>/dev/null || true
+echo TB328FU-DIAG >"$g/strings/0x409/serialnumber" 2>/dev/null || true
+echo TB328FU >"$g/strings/0x409/manufacturer" 2>/dev/null || true
+echo 'Own kernel diagnostic' >"$g/strings/0x409/product" 2>/dev/null || true
+echo ACM >"$g/configs/c.1/strings/0x409/configuration" 2>/dev/null || true
+mkdir -p "$g/functions/acm.usb0"
+ln -s "$g/functions/acm.usb0" "$g/configs/c.1/acm.usb0" 2>/dev/null || true
+udc=$(ls /sys/class/udc 2>/dev/null | head -n 1)
+[ -n "$udc" ] && echo "$udc" >"$g/UDC"
+
+echo "$marker"
+echo "Diagnostic proof written; forcing a controlled panic in 10 seconds."
+
+# Force ramoops to preserve the marker. The boot image has panic=30, giving
+# enough time to enter fastboot after the expected reboot loop.
+sleep 10
+echo 1 >/proc/sys/kernel/sysrq 2>/dev/null || true
+echo c >/proc/sysrq-trigger
+
+# Fallback only when sysrq is unavailable.
+exec setsid cttyhack sh
+

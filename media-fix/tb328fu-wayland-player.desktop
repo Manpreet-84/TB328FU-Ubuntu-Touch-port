@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=Wayland Video (test)
+Comment=Play local video with software decoding
+Exec=/usr/bin/python3 /home/phablet/media-fix/tb328fu-content-receiver.py %U
+Icon=video-x-generic
+Terminal=false
+NoDisplay=false
+Categories=AudioVideo;Player;
+MimeType=video/mp4;video/x-matroska;video/webm;
+X-Lomiri-Touch=true

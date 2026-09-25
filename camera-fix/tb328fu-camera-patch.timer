@@ -1,0 +1,10 @@
+[Unit]
+Description=Apply TB328FU Camera patch after Lomiri startup
+
+[Timer]
+OnBootSec=90s
+AccuracySec=5s
+Unit=tb328fu-camera-patch.service
+
+[Install]
+WantedBy=timers.target

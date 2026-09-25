@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=com.lomiri.Thumbnailer
+Exec=/usr/bin/env GST_PLUGIN_FEATURE_RANK=amcviddec-c2unisocavcdecoder:0,openh264dec:3000 /usr/libexec/lomiri-thumbnailer/thumbnailer-service
+AssumedAppArmorLabel=unconfined

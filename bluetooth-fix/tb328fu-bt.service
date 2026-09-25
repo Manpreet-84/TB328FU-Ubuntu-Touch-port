@@ -1,0 +1,19 @@
+[Unit]
+Description=TB328FU Unisoc CP2 Bluetooth HCI proxy (userspace H4 bridge)
+# The CP2 rejects HCI_OP_WRITE_DEF_LINK_POLICY (0x080f), which aborts the
+# stock kernel's controller init (hci0 end: err -22).  This bridge answers
+# that command locally so hci0 comes up.  It must exist before bluetoothd
+# probes for adapters.
+After=graphical.target
+ConditionPathExists=/sys/class/tty/ttyBT0
+
+[Service]
+Type=simple
+ExecStart=/bin/sh /etc/writable/tb328fu-bt/tb328fu-bt-start-safe.sh
+Restart=no
+TimeoutStopSec=5
+KillMode=control-group
+SyslogIdentifier=tb328fu-bt
+StandardOutput=journal
+StandardError=journal
+

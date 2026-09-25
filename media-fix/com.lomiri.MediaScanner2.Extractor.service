@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=com.lomiri.MediaScanner2.Extractor
+Exec=/usr/bin/env GST_PLUGIN_FEATURE_RANK=amcviddec-c2unisocavcdecoder:0,openh264dec:3000 /usr/libexec/mediascanner-2.0/mediascanner-extractor

@@ -1,0 +1,44 @@
+# Never publish device/user secrets or proprietary firmware.
+keys/
+*.key
+*.pem
+*.p12
+*.keystore
+*.env
+.env*
+
+# Android/boot/vendor artifacts.
+*.img
+*.bin
+*.blob
+*.ko
+*.so
+*.apk
+*.apex
+*.zip
+*.tar*
+*.xz
+*.lz4
+vendor/
+firmware/
+device-capture*/
+
+# Personal captures and generated media.
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.mp4
+*.ogg
+*.wav
+*.log
+
+# Local tooling.
+.vscode/
+.idea/
+__pycache__/
+*.py[cod]
+*.swp
+Thumbs.db
+.DS_Store
+
