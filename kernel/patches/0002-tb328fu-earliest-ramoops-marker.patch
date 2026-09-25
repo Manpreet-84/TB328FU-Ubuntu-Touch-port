@@ -1,0 +1,53 @@
+diff --git a/arch/arm64/kernel/head.S b/arch/arm64/kernel/head.S
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -110,19 +110,49 @@ ENTRY(stext)
++	bl	tb328fu_early_marker
+ 	bl	preserve_boot_args
+ 	bl	el2_setup			// Drop to EL1, w0=cpu_boot_mode
+ 	adrp	x23, __PHYS_OFFSET
+ 	and	x23, x23, MIN_KIMG_ALIGN - 1	// KASLR offset, defaults to 0
+ 	bl	set_cpu_boot_mode_flag
+ 	bl	__create_page_tables
+ 	/*
+ 	 * The following calls CPU setup code, see arch/arm64/mm/proc.S for
+ 	 * details.
+ 	 * On return, the CPU will be ready for the MMU to be turned on and
+ 	 * the TCR will have been set.
+ 	 */
+ 	bl	__cpu_setup			// initialise processor
+ 	b	__primary_switch
+ ENDPROC(stext)
+ 
++/*
++ * Earliest TB328FU execution proof. Exact Lenovo DT reserves ramoops at
++ * 0xfff80000; its console zone starts at 0xfffb0000. Write a valid record
++ * before MMU setup. Preserve x0-x3 boot arguments.
++ */
++tb328fu_early_marker:
++	movz	x9, #0xfffb, lsl #16
++	movz	w10, #0x4244
++	movk	w10, #0x4347, lsl #16	// PERSISTENT_RAM_SIG (DBGC)
++	str	w10, [x9]
++	mov	w10, #29
++	str	w10, [x9, #4]		// start
++	str	w10, [x9, #8]		// size
++	adr	x10, .Ltb328fu_early_text
++	ldr	x11, [x10]
++	stur	x11, [x9, #12]
++	ldr	x11, [x10, #8]
++	stur	x11, [x9, #20]
++	ldr	x11, [x10, #16]
++	stur	x11, [x9, #28]
++	ldr	x11, [x10, #24]
++	stur	x11, [x9, #36]
++	dc	cvac, x9
++	dsb	sy
++	ret
++.Ltb328fu_early_text:
++	.ascii	"TB328FU_EARLY_HEAD_S_REACHED\n"
++	.balign	8
++
+ /*
+  * Preserve the arguments passed by the bootloader in x0 .. x3
+  */

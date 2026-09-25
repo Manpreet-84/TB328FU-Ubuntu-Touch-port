@@ -46,3 +46,16 @@ Failure boundary is before initramfs: bootloader-to-kernel handoff, early kernel
 startup, or incompatible board DT/clock/power assumptions. Next test must add an
 earlier kernel-side proof or use a closer TB328FU 5.4.233 source; userspace and
 Wi-Fi suspend work cannot be tested with this donor yet.
+
+## Earliest-entry test image
+
+Patch `0002-tb328fu-earliest-ramoops-marker.patch` inserts the first branch at
+ARM64 `stext`. Before MMU or CPU setup, it writes a valid 29-byte persistent-RAM
+console record to the exact Lenovo DT ramoops console zone at `0xfffb0000`, then
+cleans that cache line. Marker: `TB328FU_EARLY_HEAD_S_REACHED`.
+
+Disassembly confirms `stext` begins by branching to the marker routine. Updated
+Image SHA-256 is
+`83ef7c3f78348bcdf89063be6dbcff6deca8e616cdd3efa1fb199f34f8c41e3c`;
+verified diagnostic image SHA-256 is
+`3bcdf4fc653a991c653fd9f8eeadde782587e3da38a0ef1f27cd2d881e40b6da`.

@@ -7,7 +7,6 @@ source_dir=${KERNEL_SOURCE:?set KERNEL_SOURCE to the UMS512 5.4 checkout}
 output_dir=${KERNEL_OUT:?set KERNEL_OUT to an empty build directory}
 seed_config=${KERNEL_CONFIG:?set KERNEL_CONFIG to the captured TB328FU config}
 clang_dir=${CLANG_DIR:?set CLANG_DIR to Android clang-r416183b/bin}
-patch_file="$repo_dir/kernel/patches/0001-ums512-minimum-build-fixes.patch"
 fragment="$repo_dir/config/kernel/halium.config.fragment"
 
 test "$(git -C "$source_dir" rev-parse HEAD)" = "$base" || {
@@ -24,12 +23,14 @@ export KBUILD_BUILD_USER=tb328fu
 export KBUILD_BUILD_HOST=builder
 export KBUILD_BUILD_TIMESTAMP="$(git -C "$source_dir" show -s --format=%cI "$base")"
 
-if git -C "$source_dir" apply --check "$patch_file" 2>/dev/null; then
-    git -C "$source_dir" apply "$patch_file"
-elif ! git -C "$source_dir" apply --reverse --check "$patch_file" 2>/dev/null; then
-    echo "kernel patch is neither applicable nor already applied" >&2
-    exit 1
-fi
+for patch_file in "$repo_dir"/kernel/patches/*.patch; do
+    if git -C "$source_dir" apply --check "$patch_file" 2>/dev/null; then
+        git -C "$source_dir" apply "$patch_file"
+    elif ! git -C "$source_dir" apply --reverse --check "$patch_file" 2>/dev/null; then
+        echo "kernel patch is neither applicable nor already applied: $patch_file" >&2
+        exit 1
+    fi
+done
 
 cp "$seed_config" "$output_dir/.config"
 cp "$fragment" "$output_dir/tb328fu-halium.config"
