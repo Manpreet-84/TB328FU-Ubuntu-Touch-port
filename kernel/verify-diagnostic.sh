@@ -5,7 +5,7 @@ image=${1:?usage: verify-diagnostic.sh DIAGNOSTIC_IMAGE KERNEL_IMAGE RESCUE_IMAG
 kernel=${2:?usage: verify-diagnostic.sh DIAGNOSTIC_IMAGE KERNEL_IMAGE RESCUE_IMAGE}
 rescue=${3:?usage: verify-diagnostic.sh DIAGNOSTIC_IMAGE KERNEL_IMAGE RESCUE_IMAGE}
 unpack=${UNPACK_BOOTIMG:?set UNPACK_BOOTIMG to unpack_bootimg.py}
-rescue_sha=fa0655e8dc00ca2ff69bdb314094058f35a069267d1d3910a5ffbabfe4302486
+rescue_sha=7cd0dfb12a9508c0a90cc882d33140230c78b24744ae438363d9f41ad8e526f8
 marker=TB328FU_OWN_KERNEL_V2_REACHED_INIT
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT

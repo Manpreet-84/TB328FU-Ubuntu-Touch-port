@@ -8,7 +8,7 @@ rescue=${RESCUE_IMAGE:?set RESCUE_IMAGE to the verified V96 boot image}
 output=${OUTPUT_IMAGE:-$repo_dir/out/tb328fu-own-kernel-v2-diag.img}
 work=${BUILD_DIR:-$repo_dir/out/diagnostic-v2}
 mkbootimg=${MKBOOTIMG:?set MKBOOTIMG to mkbootimg.py}
-rescue_sha=fa0655e8dc00ca2ff69bdb314094058f35a069267d1d3910a5ffbabfe4302486
+rescue_sha=7cd0dfb12a9508c0a90cc882d33140230c78b24744ae438363d9f41ad8e526f8
 
 test "$(sha256sum "$rescue" | cut -d' ' -f1)" = "$rescue_sha" || {
     echo "refusing build: V96 rescue image hash is wrong" >&2

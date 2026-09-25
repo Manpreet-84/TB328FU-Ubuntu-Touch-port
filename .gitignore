@@ -34,6 +34,7 @@ device-capture*/
 *.log
 
 # Local tooling.
+out/
 .vscode/
 .idea/
 __pycache__/
