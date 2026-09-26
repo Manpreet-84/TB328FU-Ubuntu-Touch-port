@@ -67,3 +67,17 @@ diagnostic was only 29,048,832 bytes. Builder now copies the verified V96
 container and overwrites only its boot payload; verifier requires exact
 partition size and footer magic. Current full-container diagnostic SHA-256:
 `3b6bf0fc36ef3cb1cfd4482b9a89774a3ed5505666dadcc155513272655606eb`.
+
+## Full-container slot-B result
+
+The 67,108,864-byte diagnostic was flashed only to `boot_b`, with verified
+V96 retained on `boot_a`. Selecting B produced a repeating Lenovo-logo boot
+loop. V96 was then re-flashed to A and Ubuntu recovered normally. Immediate
+inspection of `/sys/fs/pstore` on A found no record and no
+`TB328FU_EARLY_HEAD_S_REACHED` marker.
+
+Because the marker is the first branch at ARM64 `stext`, the full container
+still did not transfer control to the donor kernel. The remaining boundary is
+bootloader-side image verification/loading or an earlier boot wrapper, rather
+than Linux initramfs, drivers, DT probing, or a normal kernel panic. Do not
+repeat this image unchanged.
