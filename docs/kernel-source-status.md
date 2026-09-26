@@ -43,6 +43,20 @@ This remains a device-native diagnostic baseline, not a replacement for the
 running Lenovo Android 12 kernel. First boot test must be RAM-only and needs a
 matching diagnostic initramfs; do not flash it directly.
 
+A full-size, header-v4 RAM-only diagnostic container was built and independently
+unpacked successfully. It contains the exact kernel and expected init marker:
+
+```text
+image  1d04d822c897a8daa0c5ded6feee31299425db9a7795d2cbca3fdd924a336041
+kernel 44afeda84fcb0230abf3765bcdb422ee4c3ed7bdf2093d3016fe6e6ae150f08a
+ramdisk 93589580a769dd4e65e8405a8b58556ecd637266ba326e6088a35715e74c0f0a
+size   67,108,864 bytes
+```
+
+The image remains outside Git and has not been sent to or written onto the
+tablet. Preserve V96 as rollback; test only with `fastboot boot` when the user
+is ready at the device.
+
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
 can build a minimum ARM64 Image, but it is still experimental and not a substitute
