@@ -57,6 +57,25 @@ The image remains outside Git and has not been sent to or written onto the
 tablet. Preserve V96 as rollback; test only with `fastboot boot` when the user
 is ready at the device.
 
+## Lenovo 4.14 RAM-only results
+
+The first RAM-only test was accepted by fastboot, then automatically returned
+to V96 on slot A. Ubuntu reported no pstore record and the cache partition had
+no diagnostic-init marker. Therefore the 4.14 kernel did not reach `/init`.
+
+Patch `0002-tb328fu-earliest-ramoops-marker.patch` applies to Lenovo 4.14 with
+only a context offset. A second build confirms `stext` branches to the marker
+as its first instruction. Its verified full-size diagnostic hashes are:
+
+```text
+image  4c113183fa604cb73b684f40e4c8fcddd1971f781c6bf4c911bdd378492474e3
+kernel 35043166459432e1c51b03af51eecd75933d02a41b62045a040f6ff8ff04cbd4
+ramdisk 4c8e026de67a80927efc53d1ec9ef14f8c5521b8f898d1870e4d4ef110c7f86f
+```
+
+This marker variant has not yet been sent to the tablet. Its RAM-only result
+will distinguish bootloader/pre-entry rejection from a later 4.14 boot failure.
+
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
 can build a minimum ARM64 Image, but it is still experimental and not a substitute
