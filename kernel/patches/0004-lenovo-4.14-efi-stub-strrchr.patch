@@ -1,0 +1,23 @@
+diff --git a/drivers/firmware/efi/libstub/string.c b/drivers/firmware/efi/libstub/string.c
+--- a/drivers/firmware/efi/libstub/string.c
++++ b/drivers/firmware/efi/libstub/string.c
+@@ -12,6 +12,21 @@
+ #include <linux/types.h>
+ #include <linux/string.h>
+ 
++/* libfdt calls strrchr(), so the prefixed ARM64 EFI stub must provide it. */
++char *strrchr(const char *s, int c)
++{
++	const char *last = NULL;
++
++	do {
++		if (*s == (char)c)
++			last = s;
++	} while (*s++);
++
++	return (char *)last;
++}
++
+ #ifndef __HAVE_ARCH_STRSTR
+ /**
+  * strstr - Find the first substring in a %NUL terminated string

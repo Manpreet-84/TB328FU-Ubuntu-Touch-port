@@ -11,6 +11,9 @@ CONFIG_TMPFS_XATTR=y
 CONFIG_PID_NS=y
 CONFIG_IPC_NS=y
 CONFIG_CGROUP_DEVICE=y
+# TB328FU firmware enters Linux through the ARM64 PE/EFI stub. Without this,
+# Image header offset 0x3c is zero and fastboot falls back before stext.
+CONFIG_EFI=y
 CONFIG_MMC_SDHCI_SPRD=y
 CONFIG_MMC_HSQ=y
 CONFIG_MMC_SWCQ=y

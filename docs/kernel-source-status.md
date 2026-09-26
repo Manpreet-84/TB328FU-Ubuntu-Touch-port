@@ -76,6 +76,24 @@ ramdisk 4c8e026de67a80927efc53d1ec9ef14f8c5521b8f898d1870e4d4ef110c7f86f
 This marker variant has not yet been sent to the tablet. Its RAM-only result
 will distinguish bootloader/pre-entry rejection from a later 4.14 boot failure.
 
+That test also fell back to V96 without leaving the earliest marker. Header
+comparison then found the actionable difference: V96 has an ARM64 PE/EFI header
+at Image offset `0x40`, while the first Lenovo builds had a zero PE offset.
+`CONFIG_EFI=y` is therefore required for this bootloader. Lenovo 4.14 also needs
+patch `0004-lenovo-4.14-efi-stub-strrchr.patch` because its EFI-local string
+library lacks the `strrchr()` used by its bundled libfdt.
+
+The corrected kernel builds with the same `PE\0\0` header and offset as V96,
+while retaining the first-instruction `stext` marker. Verified hashes:
+
+```text
+image  53733d992fb60d0de76bc56464e15c8ac3cd1699ad9f4fdcfcfff4bdf31a5a2f
+kernel a158a7f78a1cbd71443adfbb82955dd46dacc61a2d8d966e4978105c937b5622
+ramdisk e524969917ff0308a5983f61bb5724ddbe9417d1f2e6493eef0e1b0c334bf9bc
+```
+
+This EFI-corrected image remains untested and outside Git.
+
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
 can build a minimum ARM64 Image, but it is still experimental and not a substitute
