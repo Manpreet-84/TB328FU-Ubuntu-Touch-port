@@ -36,7 +36,5 @@ CONFIG_LTO_NONE=y
 
 # AppArmor remains a source-level task. Do not enable these until the selected
 # 5.4 tree contains the required Android/Ubuntu AppArmor implementation.
-# CONFIG_SECURITY_APPARMOR=y
-# CONFIG_SECURITY_APPARMOR_BOOTPARAM_VALUE=1
-# CONFIG_DEFAULT_SECURITY_APPARMOR=y
+# CONFIG_SECURITY_APPARMOR is not set
 

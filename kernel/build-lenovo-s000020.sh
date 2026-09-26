@@ -18,6 +18,20 @@ common="ARCH=arm64 O=$output_dir CC=$clang_dir/clang LD=$clang_dir/ld.lld AR=$cl
 
 # shellcheck disable=SC2086
 make -C "$source_dir" $common sprd_sharkl5Pro_defconfig
+
+# Optional Ubuntu/Halium additions. Copy first because this old merge script
+# cannot safely parse fragment paths containing spaces.
+if [ -n "${HALIUM_FRAGMENT:-}" ]; then
+    test -f "$HALIUM_FRAGMENT"
+    fragment_copy="$output_dir/halium.config.fragment"
+    cp "$HALIUM_FRAGMENT" "$fragment_copy"
+    chmod +x "$source_dir/scripts/kconfig/merge_config.sh"
+    "$source_dir/scripts/kconfig/merge_config.sh" -m -O "$output_dir" \
+        "$output_dir/.config" "$fragment_copy"
+    # shellcheck disable=SC2086
+    make -C "$source_dir" $common olddefconfig
+fi
+
 # Old vendor code needs warnings demoted and a newer-Clang builtin disabled.
 # shellcheck disable=SC2086
 make -C "$source_dir" $common KCFLAGS='-Wno-error -fno-builtin-stpcpy' \

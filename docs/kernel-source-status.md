@@ -31,9 +31,17 @@ The unmodified `sprd_sharkl5Pro_defconfig` Image SHA-256 is
 `610c9caf700eab5102551c423b7f575becf8e02a41256d7605cef0b544a467a6`.
 Use `kernel/build-lenovo-s000020.sh` to reproduce it.
 
-This defconfig lacks `CONFIG_DEVTMPFS` and framebuffer console support. It is a
-device-native boot baseline, not yet an Ubuntu-ready kernel. Add the smallest
-Halium/Ubuntu config fragment before producing a RAM-only diagnostic image.
+The smallest Halium/Ubuntu fragment also builds successfully. Set
+`HALIUM_FRAGMENT=config/kernel/halium.config.fragment` when invoking the build
+script. Its Image is 23,255,056 bytes with SHA-256
+`44afeda84fcb0230abf3765bcdb422ee4c3ed7bdf2093d3016fe6e6ae150f08a`.
+The resulting config enables namespaces, cgroup devices, devtmpfs, and tmpfs
+xattrs. This 4.14 tree has no `CONFIG_MMC_SDHCI_SPRD` symbol; its native
+`CONFIG_MMC_SPRD_SDHCR11=y` storage driver remains enabled instead.
+
+This remains a device-native diagnostic baseline, not a replacement for the
+running Lenovo Android 12 kernel. First boot test must be RAM-only and needs a
+matching diagnostic initramfs; do not flash it directly.
 
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
