@@ -59,3 +59,11 @@ Image SHA-256 is
 `83ef7c3f78348bcdf89063be6dbcff6deca8e616cdd3efa1fb199f34f8c41e3c`;
 verified diagnostic image SHA-256 is
 `3bcdf4fc653a991c653fd9f8eeadde782587e3da38a0ef1f27cd2d881e40b6da`.
+
+The short-image test produced no earliest marker. Slot-B rebooting was A/B
+bootloader retry, not a kernel panic. Inspection found V96 is a full
+67,108,864-byte partition image ending in an `AVBf` footer, while the rejected
+diagnostic was only 29,048,832 bytes. Builder now copies the verified V96
+container and overwrites only its boot payload; verifier requires exact
+partition size and footer magic. Current full-container diagnostic SHA-256:
+`3b6bf0fc36ef3cb1cfd4482b9a89774a3ed5505666dadcc155513272655606eb`.

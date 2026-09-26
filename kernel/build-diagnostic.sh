@@ -37,6 +37,7 @@ done
         lz4 -l -9 -c
 ) >"$work/ramdisk.lz4"
 
+short="$work/boot-short.img"
 python3 "$mkbootimg" \
     --header_version 4 \
     --kernel "$kernel" \
@@ -44,7 +45,14 @@ python3 "$mkbootimg" \
     --cmdline 'console=tty0 printk.devkmsg=on panic=30 loglevel=8 ignore_loglevel' \
     --os_version 12.0.0 \
     --os_patch_level 2025-06 \
-    --output "$output"
+    --output "$short"
+
+# This bootloader rejects a short write before entering ARM64 stext. Preserve
+# the verified V96 partition container/footer and replace only the boot payload.
+cp "$rescue" "$output"
+dd if="$short" of="$output" conv=notrunc status=none
+test "$(stat -c %s "$output")" = 67108864
+test "$(tail -c 64 "$output" | head -c 4)" = AVBf
 
 sha256sum "$output" "$kernel" "$work/ramdisk.lz4" "$rescue"
 stat -c '%n %s bytes' "$output"

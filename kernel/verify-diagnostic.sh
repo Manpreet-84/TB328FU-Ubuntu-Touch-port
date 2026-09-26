@@ -11,8 +11,9 @@ work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
 
 test "$(sha256sum "$rescue" | cut -d' ' -f1)" = "$rescue_sha"
-test "$(stat -c %s "$image")" -le 67108864
+test "$(stat -c %s "$image")" = 67108864
 test ! "$image" -ef "$rescue"
+test "$(tail -c 64 "$image" | head -c 4)" = AVBf
 python3 "$unpack" --boot_img "$image" --out "$work/unpacked" >/dev/null
 cmp "$kernel" "$work/unpacked/kernel"
 lz4 -dc "$work/unpacked/ramdisk" >"$work/ramdisk.cpio"
