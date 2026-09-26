@@ -46,3 +46,17 @@ If RAM boot is also rejected, the independent-kernel path needs a verified
 TB328FU-specific UMS512 signing/unlock method or a persistent verification
 bypass. Until then, the stable distributable port should keep Lenovo's stock
 kernel and place maintained fixes in the initramfs/userspace layer.
+
+## V6 RAM-boot result
+
+`fastboot boot` accepted and downloaded the complete 64 MiB V6 image without
+writing a partition. The device immediately fell back to installed V96 on slot
+A. Ubuntu reported Lenovo kernel `5.4.233-android12-9-g79e86a50ca56`, and an
+immediate `/sys/fs/pstore` inspection contained neither the EFI-entry marker nor
+the later `stext` marker.
+
+The V6 PE entrypoint calls the persistent-RAM marker as its third instruction.
+Its absence establishes that firmware rejected or bypassed the custom kernel
+before executing its PE entrypoint. Stop iterating kernel-side markers. Future
+independent-kernel work must solve the TB328FU UMS512 verification/signing chain;
+otherwise retain the accepted Lenovo kernel and develop above it.
