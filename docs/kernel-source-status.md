@@ -24,6 +24,17 @@ Its `kernel4.14/` tree is Linux 4.14.193 and contains native Spreadtrum
 and associated vendor drivers. Keep the archive outside Git because it is
 1.55 GiB compressed and 2.9 GiB for the kernel tree alone.
 
+The native tree builds with Android clang-r416183b after restoring the archive's
+missing executable bit on `arch/arm64/kernel/vdso/gen_vdso_offsets.sh` and using
+`KCFLAGS='-Wno-error -fno-builtin-stpcpy'` for modern-toolchain compatibility.
+The unmodified `sprd_sharkl5Pro_defconfig` Image SHA-256 is
+`610c9caf700eab5102551c423b7f575becf8e02a41256d7605cef0b544a467a6`.
+Use `kernel/build-lenovo-s000020.sh` to reproduce it.
+
+This defconfig lacks `CONFIG_DEVTMPFS` and framebuffer console support. It is a
+device-native boot baseline, not yet an Ubuntu-ready kernel. Add the smallest
+Halium/Ubuntu config fragment before producing a RAM-only diagnostic image.
+
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
 can build a minimum ARM64 Image, but it is still experimental and not a substitute
