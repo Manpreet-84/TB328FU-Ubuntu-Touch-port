@@ -92,7 +92,18 @@ kernel a158a7f78a1cbd71443adfbb82955dd46dacc61a2d8d966e4978105c937b5622
 ramdisk e524969917ff0308a5983f61bb5724ddbe9417d1f2e6493eef0e1b0c334bf9bc
 ```
 
-This EFI-corrected image remains untested and outside Git.
+The EFI-corrected image was accepted but still returned to V96 without the
+`stext` marker. This narrows failure to the EFI stub itself. Patch
+`0003-tb328fu-efi-entry-ramoops-marker.patch` also applies to Lenovo 4.14 and
+adds proof at its first assembly entry. The verified next diagnostic is:
+
+```text
+image  6cbe3a626cec4accc0fac483eb7246c67255596efbf3d84db341faecc590132c
+kernel 2c31dafebd31777070db7793a30889d17b54a533bbe96c012c3bb449936c98bd
+ramdisk b8386fa676057e9ba4d33bc43fe7da2062cd1823763222225ca764b91dfc6d57
+```
+
+This EFI-entry-marker image remains untested and outside Git.
 
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
