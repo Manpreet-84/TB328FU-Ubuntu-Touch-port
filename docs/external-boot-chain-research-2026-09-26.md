@@ -47,6 +47,17 @@ TB328FU-specific UMS512 signing/unlock method or a persistent verification
 bypass. Until then, the stable distributable port should keep Lenovo's stock
 kernel and place maintained fixes in the initramfs/userspace layer.
 
+Later offline checks refined this conclusion. Stock `vbmeta_a` chains `boot`
+to Lenovo public-key SHA-1 `39d7d111af2dcf24cc505334d4c664e29a9b4e1f`.
+The public Unisoc BSP signing key has SHA-1
+`ea410c1b46cdb2e40e526880ff383f083bd615d5`, so a simple BSP-key re-sign is
+not accepted by that chain. More importantly, live `vbmeta_a` is the original
+signed image with flags zero, while V96 has an invalid embedded boot AVB footer
+and still boots. The unlocked bootloader therefore appears to bypass the boot
+hash already. Signature enforcement is not proven to be the donor blocker;
+kernel/board incompatibility remains at least as likely. Do not perform a
+destructive "big resign" based on the earlier hypothesis.
+
 ## V6 RAM-boot result
 
 `fastboot boot` accepted and downloaded the complete 64 MiB V6 image without
