@@ -81,3 +81,19 @@ still did not transfer control to the donor kernel. The remaining boundary is
 bootloader-side image verification/loading or an earlier boot wrapper, rather
 than Linux initramfs, drivers, DT probing, or a normal kernel panic. Do not
 repeat this image unchanged.
+
+## EFI-entry diagnostic
+
+Further comparison showed that both V96 and the donor `Image` are ARM64
+PE/COFF EFI applications (`MZ`, `PE`, EFI application subsystem). Firmware can
+therefore enter the PE address before ARM64 `stext`; absence of the `stext`
+marker did not exclude an EFI-stub failure.
+
+Patch `0003-tb328fu-efi-entry-ramoops-marker.patch` writes
+`TB328FU_EFI_ENTRY_REACHED` immediately after the EFI entrypoint saves its
+return state, preserving firmware arguments. Disassembly confirms the PE entry
+at `0x17f7598` calls the marker as its third instruction. The verified V6
+full-container image is 67,108,864 bytes with SHA-256
+`ae144157f98141d2d3928df8637d890c979706fd7b648150fed45ebc42dc2aa7`;
+its kernel SHA-256 is
+`9d2d0c8f25db7fcd3110fdf42bef47cf60d7b7cc3506b91f08192aaba635598b`.

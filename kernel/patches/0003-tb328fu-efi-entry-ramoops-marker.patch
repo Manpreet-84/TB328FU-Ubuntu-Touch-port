@@ -1,0 +1,43 @@
+diff --git a/arch/arm64/kernel/efi-entry.S b/arch/arm64/kernel/efi-entry.S
+--- a/arch/arm64/kernel/efi-entry.S
++++ b/arch/arm64/kernel/efi-entry.S
+@@ -31,6 +31,7 @@ ENTRY(entry)
+ 	 */
+ 	stp	x29, x30, [sp, #-32]!
+ 	mov	x29, sp
++	bl	tb328fu_efi_marker
+ 
+ 	/*
+ 	 * Call efi_entry to do the real work.
+@@ -119,2 +120,31 @@ efi_load_fail:
+ entry_end:
+ ENDPROC(entry)
++
++/*
++ * Prove that Spreadtrum firmware entered the PE/COFF EFI stub. The boot-time
++ * mapping is identity mapped here. Preserve the firmware arguments in x0-x3;
++ * x9-x11 are caller-saved scratch registers.
++ */
++tb328fu_efi_marker:
++	movz	x9, #0xfffb, lsl #16
++	movz	w10, #0x4244
++	movk	w10, #0x4347, lsl #16
++	str	w10, [x9]
++	mov	w10, #26
++	str	w10, [x9, #4]
++	str	w10, [x9, #8]
++	adr	x10, .Ltb328fu_efi_text
++	ldr	x11, [x10]
++	stur	x11, [x9, #12]
++	ldr	x11, [x10, #8]
++	stur	x11, [x9, #20]
++	ldr	x11, [x10, #16]
++	stur	x11, [x9, #28]
++	ldrh	w11, [x10, #24]
++	sturh	w11, [x9, #36]
++	dc	cvac, x9
++	dsb	sy
++	ret
++.Ltb328fu_efi_text:
++	.ascii	"TB328FU_EFI_ENTRY_REACHED\n"
++	.balign	8
