@@ -1,0 +1,28 @@
+diff --git a/drivers/input/touchscreen/himax_hx83112b.c b/drivers/input/touchscreen/himax_hx83112b.c
+--- a/drivers/input/touchscreen/himax_hx83112b.c
++++ b/drivers/input/touchscreen/himax_hx83112b.c
+@@ -403,14 +403,21 @@ static const struct himax_chip hx83112b_chip = {
+ 	.read_events = himax_read_events,
+ };
+ 
++static const struct himax_chip hx83102e_chip = {
++	.id = 0x83102e,
++	.check_id = himax_check_product_id,
++	.read_events = himax_read_events,
++};
++
+ static const struct i2c_device_id himax_ts_id[] = {
+ 	{ "hx83100a", (kernel_ulong_t)&hx83100a_chip },
+ 	{ "hx83112b", (kernel_ulong_t)&hx83112b_chip },
++	{ "hx83102e", (kernel_ulong_t)&hx83102e_chip },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, himax_ts_id);
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id himax_of_match[] = {
+ 	{ .compatible = "himax,hx83100a", .data = &hx83100a_chip },
+ 	{ .compatible = "himax,hx83112b", .data = &hx83112b_chip },
++	{ .compatible = "himax,hx83102e", .data = &hx83102e_chip },
+ 	{ /* sentinel */ }
+ };

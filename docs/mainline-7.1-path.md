@@ -80,6 +80,25 @@ DTB SHA256:   a600ae3855d1fbd0067547a88f415a20eac624cabc075fe6d467f8c23fca13d9
 The microSD and eMMC PHY timing values now come from TB328FU's installed
 DTBO overlay 1 rather than the donor RG board.
 
+Live inspection identifies the touch IC more precisely as HX83102E with
+firmware `0x8203`. The phase-1 DTS enables I2C3 at Lenovo's 1 MHz rate, EIC
+line 0 falling-edge interrupt, AP GPIO 145 reset, and the 1200x2000 coordinate
+range. Patch `kernel/mainline/patches/0001-input-himax-add-hx83102e.patch`
+extends the existing mainline Himax driver with product ID `0x83102e`.
+
+The resulting touch-enabled build succeeds:
+
+```text
+Image SHA256: 116c18c3b8d5e8073cdb54d95f4e990312f702b64f803b8a4eb05f2414a4b29e
+DTB SHA256:   5e731fe6a2a53eee0454af181c821809a776a1c0f9eb2f93454cc6728a038329
+```
+
+The display is confirmed as Lenovo's BOE HX83102E third revision. Mainline has
+an HX83102 framework, but none of its existing panel variants carries Lenovo's
+exact initialization table. Display remains disabled until that table is
+ported; substituting a similar panel profile could electrically misconfigure
+the panel.
+
 This is build proof, not boot proof. It must be paired with its DTB through
 the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.

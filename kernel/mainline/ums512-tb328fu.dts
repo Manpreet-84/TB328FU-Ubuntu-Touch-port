@@ -783,22 +783,19 @@
 };
 
 &i2c3 {
-	status = "disabled";
-	clock-frequency = <400000>;
+	status = "okay";
+	clock-frequency = <1000000>;
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	touchscreen@14 {
-		compatible = "goodix,gt911";
-		reg = <0x14>;
-		AVDD28-supply = <&touch_vdd>;
-		VDDIO-supply = <&touch_vdd>;
-		irq-gpios = <&ap_gpio 144 GPIO_ACTIVE_HIGH>;
+	touchscreen@48 {
+		compatible = "himax,hx83102e";
+		reg = <0x48>;
+		interrupt-parent = <&eic_async>;
+		interrupts = <0 IRQ_TYPE_EDGE_FALLING>;
 		reset-gpios = <&ap_gpio 145 GPIO_ACTIVE_HIGH>;
-		touchscreen-size-x = <720>;
-		touchscreen-size-y = <720>;
-		touchscreen-inverted-x;
-		touchscreen-inverted-y;
+		touchscreen-size-x = <1200>;
+		touchscreen-size-y = <2000>;
 	};
 };
 

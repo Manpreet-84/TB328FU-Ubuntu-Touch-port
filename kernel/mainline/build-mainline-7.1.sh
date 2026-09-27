@@ -12,8 +12,22 @@ test -x "$(command -v "${cross}gcc")"
 cp "$repo_dir/kernel/mainline/ums512-tb328fu.dts" \
     "$source_dir/arch/arm64/boot/dts/sprd/ums512-tb328fu.dts"
 
+for patch_file in "$repo_dir"/kernel/mainline/patches/*.patch; do
+    if git -C "$source_dir" apply --check "$patch_file" 2>/dev/null; then
+        git -C "$source_dir" apply "$patch_file"
+    elif ! git -C "$source_dir" apply --reverse --check "$patch_file" 2>/dev/null; then
+        echo "mainline patch is neither applicable nor already applied: $patch_file" >&2
+        exit 1
+    fi
+done
+
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE="$cross" defconfig
+"$source_dir/scripts/config" --file "$output_dir/.config" \
+    --enable TOUCHSCREEN_HIMAX_HX83112B \
+    --enable DRM_PANEL_HIMAX_HX83102
+make -C "$source_dir" O="$output_dir" ARCH=arm64 \
+    CROSS_COMPILE="$cross" olddefconfig
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE="$cross" -j"$(getconf _NPROCESSORS_ONLN)" \
     Image sprd/ums512-tb328fu.dtb
