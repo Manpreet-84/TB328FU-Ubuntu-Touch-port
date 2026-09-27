@@ -59,3 +59,17 @@ a RAM-only `fastboot boot` using this kernel, the exact stock wrapped DTB, and
 the v2 container. Do not flash it until RAM boot reaches the diagnostic init.
 Set `RAMDISK_IMAGE` and `KERNEL_CMDLINE` when running the build script to make
 that diagnostic variant; otherwise it preserves the stock ramdisk and cmdline.
+
+## RAM-boot result on the upgraded bootloader
+
+Both the rebuilt 4.14 diagnostic image and Lenovo's untouched 64 MiB S000027
+`boot.img` were accepted by `fastboot boot`, then returned to fastboot without
+starting ADB. The untouched-image control proves this is not caused by our
+kernel build or repacking. The bootloader currently installed with the Android
+12/V96 base no longer boots the old v2 path as the S000027 bootloader did.
+
+Consequently, v2 is valuable as the matching 4.14 source/DTB reference but is
+not directly bootable under the current firmware. Further tests must retain the
+current v4 boot contract or deliberately restore the complete matching Android
+11 boot-chain firmware; do not mix only the old boot image into the upgraded
+chain.
