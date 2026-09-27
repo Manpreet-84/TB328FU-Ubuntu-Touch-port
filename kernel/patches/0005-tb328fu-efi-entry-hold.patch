@@ -1,0 +1,12 @@
+diff --git a/arch/arm64/kernel/efi-entry.S b/arch/arm64/kernel/efi-entry.S
+--- a/arch/arm64/kernel/efi-entry.S
++++ b/arch/arm64/kernel/efi-entry.S
+@@ -34,6 +34,8 @@ ENTRY(entry)
+ 	stp	x29, x30, [sp, #-32]!
+ 	mov	x29, sp
+ 	bl	tb328fu_efi_marker
++1:
++	b	1b
+ 
+ 	/*
+ 	 * Call efi_entry to do the real work.

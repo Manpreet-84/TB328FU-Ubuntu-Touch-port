@@ -103,7 +103,21 @@ kernel 2c31dafebd31777070db7793a30889d17b54a533bbe96c012c3bb449936c98bd
 ramdisk b8386fa676057e9ba4d33bc43fe7da2062cd1823763222225ca764b91dfc6d57
 ```
 
-This EFI-entry-marker image remains untested and outside Git.
+The EFI-entry-marker image also returned to V96 without a retained marker.
+Since firmware may clear ramoops during fallback, absence alone cannot prove
+that EFI entry was never reached. The next probe is patch
+`0005-tb328fu-efi-entry-hold.patch`: it deliberately loops immediately after
+the EFI marker. Automatic V96 fallback means rejection before EFI entry; a
+stable Lenovo-logo hold proves EFI entry and requires a manual power reset.
+
+The hold probe disassembly confirms an infinite branch immediately after the
+EFI marker call. Its verified hashes are:
+
+```text
+image  4e2595fb3a70aa44ab1c6968ffe5982e0f269cc61f216e8187da0340a42a9aa2
+kernel 766699f0d5e0fa4e59002ca54016f989023d1347051c9184d558b32453aeb6a8
+ramdisk 5d43bd38e66fb3802ef14e33ce5f34e88fc7d136b6170c025c019a54dceda8cf
+```
 
 Google's `android12-5.4.233_r00` tag builds successfully but is conclusively not
 ABI-compatible with the Lenovo modules. A public UMS512 5.4.254 donor is closer and
