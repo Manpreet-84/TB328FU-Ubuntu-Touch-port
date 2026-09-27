@@ -81,3 +81,10 @@ V96. No diagnostic cache marker or pstore record survived. Therefore merely
 appending the matching DTB does not bridge the upgraded boot chain to 4.14; the
 remaining boundary is earlier than diagnostic `/init` and may include the
 bootloader's kernel-entry contract or its selection of vendor-boot data.
+
+A final combined probe used the EFI-enabled 4.14 image, the raw matching
+S000027 DTB appended to that image, and the accepted V96 v4 container/footer.
+It also fell back to V96 with no pstore or cache marker. This rules out the
+simple "EFI plus appended DTB" combination. Investigation should now focus on
+the upgraded bootloader's kernel-entry/validation behavior rather than further
+blind kernel configuration combinations.
