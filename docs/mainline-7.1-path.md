@@ -33,6 +33,7 @@ panel       BOE HX83102E, 1200x2000, three listed revisions
 touch       Himax hxcommon, I2C3 address 0x48
 hall        GPIO 130, supplied by vddgen0
 Wi-Fi/BT    Marlin3Lite / SC2355 SDIO
+microSD     SDIO0, EIC 19 card detect, vddsdcore + vddsdio rails
 cameras     main I2C0 0x5a, front I2C1 0x6e
 SAR         Awinic AW9610X, I2C2 address 0x12
 PMIC        SC2730
@@ -72,10 +73,12 @@ and external charger nodes are disabled until their TB328FU wiring is ported.
 It builds successfully with `kernel/mainline/build-mainline-7.1.sh`:
 
 ```text
-Image SHA256: fd1206110987be6c24e45eb962e0efc3dbd8e56fa02459fd87db3f02e488c825
-DTB SHA256:   7ed6815b5d84427b08588dd818438f182f5ad0f271e3be37a2260b3f43dce6b8
-DTB size:     77,973 bytes
+Image SHA256: 1795be9ca2d2717b01eb1212ebdde00f5474c2c325cd93535dcd266c8644c593
+DTB SHA256:   a600ae3855d1fbd0067547a88f415a20eac624cabc075fe6d467f8c23fca13d9
 ```
+
+The microSD and eMMC PHY timing values now come from TB328FU's installed
+DTBO overlay 1 rather than the donor RG board.
 
 This is build proof, not boot proof. It must be paired with its DTB through
 the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
@@ -86,8 +89,8 @@ diagnostic pair. Both images independently unpack and reproduce the intended
 kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
-boot SHA256:        32629eefdffa2f0475f679b51a49e489d31880bd24e7918e89020dac1d064b1d
-vendor_boot SHA256: 28d3ae6efa6e177bc7a2e817d4dabfaaea4e9ae254a9a29e82ba2df766536bd7
+boot SHA256:        aa228fd091f6625d19d579e55f043dd56154a22ba62c8f847f523e0191c3a4ce
+vendor_boot SHA256: 3a9222e31d6fd8cb9ba5340041013843f6c64d39ea80bc13381070e7b6053bbb
 ```
 
 These are paired research artifacts only. `fastboot boot` cannot provide the
