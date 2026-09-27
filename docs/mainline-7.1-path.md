@@ -61,3 +61,22 @@ initramfs offline, then choose one recoverable paired test path:
 
 The microSD/extlinux route is preferred because kernel/DT changes do not touch
 the working Ubuntu installation.
+
+## Initial TB328FU build
+
+`kernel/mainline/ums512-tb328fu.dts` is the conservative phase-1 board file.
+It declares the tablet's 4 GiB memory and retains the proven UMS512 storage,
+USB and SC2355 WCN blocks. RG-specific display, touch, keys, audio, fuel gauge
+and external charger nodes are disabled until their TB328FU wiring is ported.
+
+It builds successfully with `kernel/mainline/build-mainline-7.1.sh`:
+
+```text
+Image SHA256: fd1206110987be6c24e45eb962e0efc3dbd8e56fa02459fd87db3f02e488c825
+DTB SHA256:   7ed6815b5d84427b08588dd818438f182f5ad0f271e3be37a2260b3f43dce6b8
+DTB size:     77,973 bytes
+```
+
+This is build proof, not boot proof. It must be paired with its DTB through
+the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
+would silently reuse the incompatible installed `vendor_boot` DTB.
