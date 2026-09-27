@@ -1,0 +1,24 @@
+--- a/arch/arm64/kernel/head.S
++++ b/arch/arm64/kernel/head.S
+@@ -116,5 +116,7 @@ pe_header:
+  */
+ ENTRY(stext)
++	adrp	x0, tb328fu_embedded_dtb
++	add	x0, x0, :lo12:tb328fu_embedded_dtb
+ 	bl	preserve_boot_args
+ 	bl	el2_setup			// Drop to EL1, w0=cpu_boot_mode
+ 	adrp	x23, __PHYS_OFFSET
+@@ -134,6 +136,13 @@ ENTRY(stext)
+ 	b	__primary_switch
+ ENDPROC(stext)
+ 
++	.pushsection ".init.rodata", "a"
++	.balign 8
++tb328fu_embedded_dtb:
++	.incbin "arch/arm64/boot/dts/sprd/tb328fu-s000027.dtb"
++	.balign 8
++	.popsection
++
+ /*
+  * Preserve the arguments passed by the bootloader in x0 .. x3
+  */

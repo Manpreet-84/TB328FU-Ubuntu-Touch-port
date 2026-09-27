@@ -1,7 +1,7 @@
 diff --git a/drivers/firmware/efi/libstub/string.c b/drivers/firmware/efi/libstub/string.c
 --- a/drivers/firmware/efi/libstub/string.c
 +++ b/drivers/firmware/efi/libstub/string.c
-@@ -12,6 +12,21 @@
+@@ -12,6 +12,19 @@
  #include <linux/types.h>
  #include <linux/string.h>
  
