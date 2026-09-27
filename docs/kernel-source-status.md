@@ -1,15 +1,16 @@
 # Kernel source status
 
-The running tablet reports:
+The running V96 tablet reports:
 
 ```text
 5.4.233-android12-9-g79e86a50ca56
 Android clang 12.0.5 / clang-r416183b
 ```
 
-Lenovo's available `tb328fu_s000020_220125_row` archive instead contains Linux
-4.14.193. It remains useful for board documentation but cannot reproduce the
-running kernel.
+Lenovo's `tb328fu_s000020_220125_row` archive contains Linux 4.14.193. It does
+not reproduce the running Android 12 kernel, but S000027 firmware analysis now
+confirms it belongs to the tablet's earlier Android 11 boot chain. See
+`docs/s000027-boot-layout.md`.
 
 The official archive was downloaded from Lenovo and verified on 2026-09-26:
 
@@ -76,12 +77,12 @@ ramdisk 4c8e026de67a80927efc53d1ec9ef14f8c5521b8f898d1870e4d4ef110c7f86f
 This marker variant has not yet been sent to the tablet. Its RAM-only result
 will distinguish bootloader/pre-entry rejection from a later 4.14 boot failure.
 
-That test also fell back to V96 without leaving the earliest marker. Header
-comparison then found the actionable difference: V96 has an ARM64 PE/EFI header
-at Image offset `0x40`, while the first Lenovo builds had a zero PE offset.
-`CONFIG_EFI=y` is therefore required for this bootloader. Lenovo 4.14 also needs
-patch `0004-lenovo-4.14-efi-stub-strrchr.patch` because its EFI-local string
-library lacks the `strrchr()` used by its bundled libfdt.
+That test also fell back to V96 without leaving the earliest marker. Comparing
+only against V96 suggested an EFI requirement, but later extraction of Lenovo's
+matching S000027 boot image disproved it: the stock 4.14 config has
+`CONFIG_EFI` disabled and uses boot header v2 with an embedded wrapped DTB.
+The v4 tests mixed an Android 11 kernel with the Android 12 boot chain, so their
+failure does not reject the 4.14 source itself.
 
 The corrected kernel builds with the same `PE\0\0` header and offset as V96,
 while retaining the first-instruction `stext` marker. Verified hashes:
