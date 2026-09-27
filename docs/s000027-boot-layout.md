@@ -57,3 +57,5 @@ Image SHA256: 7def3859033a83f4fd12bccf8da8a6829c30d919b3b26f8133e85a5d395883fc
 That is only 65,536 bytes larger than the S000027 binary. The next safe test is
 a RAM-only `fastboot boot` using this kernel, the exact stock wrapped DTB, and
 the v2 container. Do not flash it until RAM boot reaches the diagnostic init.
+Set `RAMDISK_IMAGE` and `KERNEL_CMDLINE` when running the build script to make
+that diagnostic variant; otherwise it preserves the stock ramdisk and cmdline.
