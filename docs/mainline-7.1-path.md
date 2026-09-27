@@ -80,3 +80,15 @@ DTB size:     77,973 bytes
 This is build proof, not boot proof. It must be paired with its DTB through
 the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
+
+`kernel/mainline/build-v4-pair.sh` also creates an offline Android-v4-format
+diagnostic pair. Both images independently unpack and reproduce the intended
+kernel, initramfs, DTB and vendor ramdisk:
+
+```text
+boot SHA256:        32629eefdffa2f0475f679b51a49e489d31880bd24e7918e89020dac1d064b1d
+vendor_boot SHA256: 28d3ae6efa6e177bc7a2e817d4dabfaaea4e9ae254a9a29e82ba2df766536bd7
+```
+
+These are paired research artifacts only. `fastboot boot` cannot provide the
+matching `vendor_boot`, and neither image is authorized for flashing yet.
