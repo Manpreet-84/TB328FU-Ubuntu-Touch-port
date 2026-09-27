@@ -73,3 +73,11 @@ not directly bootable under the current firmware. Further tests must retain the
 current v4 boot contract or deliberately restore the complete matching Android
 11 boot-chain firmware; do not mix only the old boot image into the upgraded
 chain.
+
+A follow-up v4 test preserved the verified V96 container/footer and appended
+the raw S000027 FDT payload to the rebuilt 4.14 `Image`, matching Unisoc's
+`Image-dtb` build mode. Fastboot accepted it, but it still fell back safely to
+V96. No diagnostic cache marker or pstore record survived. Therefore merely
+appending the matching DTB does not bridge the upgraded boot chain to 4.14; the
+remaining boundary is earlier than diagnostic `/init` and may include the
+bootloader's kernel-entry contract or its selection of vendor-boot data.
