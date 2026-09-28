@@ -109,8 +109,8 @@
 
         framebuffer_region: framebuffer-region@9e000000 {
             compatible = "framebuffer";
-            reg = <0 0x9e000000 0 (720 * 720 * 4)>;
-            iommu-addresses = <&dpu 0x9e000000 (720 * 720 * 4)>;
+            reg = <0 0x9e000000 0 (1200 * 1920 * 4)>;
+            iommu-addresses = <&dpu 0x9e000000 (1200 * 1920 * 4)>;
             no-map;
         };
 
@@ -195,19 +195,19 @@
 	lcd_avdd: regulator-lcd-avdd {
 		compatible = "regulator-fixed";
 		regulator-name = "lcd-avdd";
-		gpio = <&ap_gpio 15 GPIO_ACTIVE_HIGH>;
+		gpio = <&ap_gpio 132 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 		regulator-boot-on;
-		status = "disabled";
+		status = "okay";
 	};
 
 	lcd_avee: regulator-lcd-avee {
 		compatible = "regulator-fixed";
 		regulator-name = "lcd-avee";
-		gpio = <&ap_gpio 138 GPIO_ACTIVE_HIGH>;
+		gpio = <&ap_gpio 133 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 		regulator-boot-on;
-		status = "disabled";
+		status = "okay";
 	};
 
 	touch_vdd: regulator-touch-vdd {
@@ -517,15 +517,15 @@
 };
 
 &iommu_disp {
-	status = "disabled";
+	status = "okay";
 };
 
 &disp {
-	status = "disabled";
+	status = "okay";
 };
 
 &dpu {
-	status = "disabled";
+	status = "okay";
 	memory-region = <&framebuffer_region>;
 	reset-syscon = <&ap_ahb_regs 0x04 0x02>;
 };
@@ -535,15 +535,16 @@
 };
 
 &dsi {
-	status = "disabled";
+	status = "okay";
 	reset-syscon = <&ap_ahb_regs 0x04 0x01>;
 
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	panel@0 {
+	donor-panel@0 {
 		compatible = "rocknix,generic-dsi";
 		reg = <0>;
+		status = "disabled";
 		reset-gpios = <&ap_gpio 50 GPIO_ACTIVE_LOW>;
 		backlight = <&backlight>;
 		vdd-supply = <&lcd_avdd>;
@@ -696,6 +697,76 @@
 			"I dcs=ff data=00",
 			"I dcs=36 data=01",
 			"I dcs=53 data=2c";
+
+		port {
+			donor_panel_in: endpoint { };
+		};
+	};
+
+	panel@0 {
+		compatible = "rocknix,generic-dsi";
+		reg = <0>;
+		reset-gpios = <&ap_gpio 50 GPIO_ACTIVE_LOW>;
+		vdd-supply = <&lcd_avdd>;
+		iovcc-supply = <&lcd_avee>;
+		rotation = <90>;
+
+		/* Exact lcd_hx83102e_boe_mipi_fhdp_3rd data from DTBO index 1. */
+		panel_description =
+			"G lanes=4 format=rgb888 size=137,217 flags=3 hs_rate=988000000 lp_rate=20000000 delays=0,10,60,120,50",
+			"M clock=164514 horizontal=1200,20,20,20 vertical=1920,220,8,28 default=1",
+			"I seq=b983102e",
+			"I seq=b110faafaf2727b2574d3636363622211500",
+			"I seq=d22727",
+			"I seq=b200b047800022dc2f000000001520d700",
+			"I seq=bd03",
+			"I seq=b280",
+			"I seq=bd00",
+			"I seq=b4a187a187a187a1870192015800ff00ff",
+			"I seq=e9cd",
+			"I seq=bb01",
+			"I seq=e900",
+			"I seq=ba7003a883f200c00d",
+			"I seq=bffc8580",
+			"I seq=c023232211a21f0080000008006363",
+			"I seq=c6f9",
+			"I seq=c730",
+			"I seq=c8000404000082",
+			"I seq=cc0e",
+			"I seq=d0070405",
+			"I seq=d1670cff05",
+			"I seq=d300000000010400100c2727222f1b1b040432101900193217b607b632101a001a0000003501551a3960760f",
+			"I seq=d50302030201000100212021202322232218181818181818180504050407060706191919193838383818181818",
+			"I seq=d60405040506070607222322232021202138383838181818180203020300010001191919191818181818181818",
+			"I seq=e00002090f141e353c43415a5f63706c737d91944b5463730002090f141e353c43415a5f63706c737d91944b546373",
+			"I seq=bd01",
+			"I seq=b1019b0131",
+			"I seq=d301007c00001110000e0001",
+			"I seq=bd02",
+			"I seq=b44e0033113388",
+			"I seq=bff20002",
+			"I seq=d8fffffffffff0fffffffffff0",
+			"I seq=bd03",
+			"I seq=d8aaaaaaaaaaa0aaaaaaaaaaa0555555555550555555555550",
+			"I seq=bd00",
+			"I seq=e71213020246460e0e192127771b77012700000000170068",
+			"I seq=bd01",
+			"I seq=e7012c018e0dc60e",
+			"I seq=bd02",
+			"I seq=e7ff01fd01000022000000000000000000000000000000000081000240",
+			"I seq=bd00",
+			"I seq=e10002",
+			"I seq=510000",
+			"I seq=532c",
+			"I seq=c9000df000",
+			"I seq=b9556677",
+			"I seq=d902",
+			"I seq=b983102e",
+			"I seq=11 wait=3c",
+			"I seq=b200b047800022dc2f000000001520d700",
+			/* Fixed bring-up brightness; replace with DCS backlight. */
+			"I seq=5107d0",
+			"I seq=29 wait=14";
 
 		port {
 			panel_in: endpoint {

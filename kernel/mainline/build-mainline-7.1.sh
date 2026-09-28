@@ -24,6 +24,11 @@ done
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE="$cross" defconfig
 "$source_dir/scripts/config" --file "$output_dir/.config" \
+    --enable DRM \
+    --enable DRM_SPRD \
+    --enable DRM_FBDEV_EMULATION \
+    --enable BACKLIGHT_CLASS_DEVICE \
+    --enable DRM_PANEL_GENERIC_DSI \
     --enable TOUCHSCREEN_HIMAX_HX83112B \
     --enable DRM_PANEL_HIMAX_HX83102
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
