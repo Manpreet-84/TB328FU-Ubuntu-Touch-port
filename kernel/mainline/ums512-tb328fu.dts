@@ -3,9 +3,9 @@
  * Lenovo Tab M10 (3rd Gen) TB328FU (Unisoc UMS512 / T610,
  * sharkl5pro) initial mainline board DTS.
  *
- * Phase 1 intentionally leaves display, touch, audio, charging and keys
- * disabled. Storage, USB diagnostics and the shared SC2355 WCN block are the
- * first boot targets.
+ * Storage, USB diagnostics, display, touch, system keys and the shared SC2355
+ * WCN block use TB328FU data. Audio, cameras and charging remain staged until
+ * their native mainline paths are verified.
  */
 
 /dts-v1/;
@@ -325,27 +325,15 @@
 
 	sys_keys: gpio-keys-system {
 		compatible = "gpio-keys";
-		status = "disabled";
-		pinctrl-names = "default";
-		pinctrl-0 = <&hall_pin_func &hall_pin_misc &volup_pin_func &volup_pin_misc>;
+		status = "okay";
 
 		sw-hall {
-			label = "Hall Swivel";
+			label = "Hall Cover";
 			linux,input-type = <EV_SW>;
 			linux,code = <SW_LID>;
-			gpios = <&ap_gpio 54 GPIO_ACTIVE_LOW>;
+			gpios = <&ap_gpio 130 GPIO_ACTIVE_HIGH>;
 			debounce-interval = <10>;
 			wakeup-source;
-			/*
-			 * Wake on open only. The gpio is active-low and
-			 * asserted means closed, so DEASSERTED is the
-			 * opening edge; gpio-keys retypes the irq to that
-			 * single edge for the duration of suspend. Without
-			 * this the trigger stays EDGE_BOTH and closing the
-			 * swivel wakes a device that was put to sleep with
-			 * the power key.
-			 */
-			wakeup-event-action = <EV_ACT_DEASSERTED>;
 		};
 		key-volumedown {
 			label = "Volume Down Key";
@@ -356,8 +344,9 @@
 		key-volumeup {
 			label = "Volume Up Key";
 			linux,code = <KEY_VOLUMEUP>;
-			gpios = <&ap_gpio 30 GPIO_ACTIVE_LOW>;
+			gpios = <&ap_gpio 124 GPIO_ACTIVE_LOW>;
 			debounce-interval = <2>;
+			wakeup-source;
 		};
 		key-power {
 			label = "Power Key";
@@ -710,6 +699,7 @@
 		vdd-supply = <&lcd_avdd>;
 		iovcc-supply = <&lcd_avee>;
 		rotation = <90>;
+		dcs-backlight;
 
 		/* Exact lcd_hx83102e_boe_mipi_fhdp_3rd data from DTBO index 1. */
 		panel_description =
@@ -764,8 +754,6 @@
 			"I seq=b983102e",
 			"I seq=11 wait=3c",
 			"I seq=b200b047800022dc2f000000001520d700",
-			/* Fixed bring-up brightness; replace with DCS backlight. */
-			"I seq=5107d0",
 			"I seq=29 wait=14";
 
 		port {

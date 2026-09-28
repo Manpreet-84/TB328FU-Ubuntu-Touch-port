@@ -95,10 +95,14 @@ DTB SHA256:   5e731fe6a2a53eee0454af181c821809a776a1c0f9eb2f93454cc6728a038329
 
 The display is confirmed as Lenovo's BOE HX83102E third revision. Its exact
 1200x1920 timing, four-lane 988 MHz DSI configuration, GPIO 132/133 power
-rails, GPIO 50 reset and 51-command initialization sequence are now carried in
-the TB328FU DTS through the donor tree's generic DSI driver. A conservative
-fixed DCS brightness is used for first bring-up; runtime brightness control is
-the next display task. The complete built-in SPRD DRM stack links successfully.
+rails, GPIO 50 reset and 50-command initialization sequence are now carried in
+the TB328FU DTS through the donor tree's generic DSI driver. A native 12-bit
+DCS backlight provides runtime brightness control. The complete built-in SPRD
+DRM stack links successfully.
+
+Lenovo's system inputs are also mapped: PMIC EIC 1 power, PMIC EIC 4 volume
+down, AP GPIO 124 volume up and AP GPIO 130 hall-cover switch. The unrelated
+RG donor gamepad remains disabled.
 
 This is build proof, not boot proof. It must be paired with its DTB through
 the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
@@ -109,10 +113,10 @@ diagnostic pair. Both images independently unpack and reproduce the intended
 kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
-Image SHA256:       79138a73b3e3d955c53c3dd2b2ea76c402c90dae6eb4587105fcff0b805b77b0
-DTB SHA256:         f50f4bfafd6d134c2ebcdb5e31240eeb7289d5a6bef464ef062bbeff850564aa
-boot SHA256:        c2ecc24082c35b10733e2e26b9729e2e5f890d0eb2d79e01a765c93d029fbdc7
-vendor_boot SHA256: d27bb62b262772bc104a2efccc39d89001149f2225d68054bede4c71351a7d1a
+Image SHA256:       c7768fe539fa03d5ff5d89b98beb9ae372bb5c6759f7093a87353df2638ab0b8
+DTB SHA256:         4389ac8025110ab7d48dde5d004d8bff66afec6eab98db0e18d2859693ceb035
+boot SHA256:        8d983d221fd381361ec5cf159d70e281b85fd12d36c2434f40e9dab3b1802e51
+vendor_boot SHA256: 223d08b7b2023e6494ebe45212b7190ee56ab13e155c2255066dd6c407fdda6a
 ```
 
 These are paired research artifacts only. `fastboot boot` cannot provide the
