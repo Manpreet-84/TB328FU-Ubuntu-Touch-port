@@ -36,7 +36,7 @@ Wi-Fi/BT    Marlin3Lite / SC2355 SDIO
 microSD     SDIO0, EIC 19 card detect, vddsdcore + vddsdio rails
 charger     TI BQ25601D, I2C2 address 0x6b (live REG0B = 0x11)
 SAR         Awinic AW96105A, I2C2 address 0x12, IRQ AP GPIO90
-cameras     main I2C0 0x5a, front I2C1 0x6e
+cameras     rear HI846 8 MP, front HI556 5 MP
 PMIC        SC2730
 SoC/board   UMS512-1H10 / T610 Wi-Fi-only SKU
 ```
@@ -121,6 +121,13 @@ SC2730 microphone/headphone/speaker routing and both external-PA GPIOs (97 and
 131), replacing the donor handheld's single GPIO9 amplifier control. Audio
 stays disabled until AUDCP firmware loading and muted startup can be tested.
 
+Android's live camera property identifies the rear sensor as HI846 (8 MP) and
+the front sensor as HI556 (5 MP). Both upstream sensor drivers now build into
+the kernel. Direct sensor DT nodes remain deferred because Lenovo's generic
+`sensor-main@5a` and `sensor-sub@6e` HAL nodes do not reveal the sensors' actual
+CCI addresses, MIPI lane maps or link frequencies; the native UMS512 ISP/media
+controller must also be completed before those drivers can stream frames.
+
 This is build proof, not boot proof. Placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
 
@@ -129,9 +136,9 @@ diagnostic pair. Both images independently unpack and reproduce the intended
 kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
-Image SHA256:       e899d20f985fbdcc2b2a82a95e73e5b08d864f6479f31cbd0fa0cfc2e710f034
+Image SHA256:       8e1b1e62e3f405fd9af384e2f0ac8a91ca093b122dafd5c8074332d752f51b7d
 DTB SHA256:         6f5a8381fb21e833bbca0c7b7df8a5abb36b0007fbbbf2a25b9dab37e02d9115
-boot SHA256:        ca30fb8ca06670e37032a2b266c1f594e518e2ab3188a21ae66865a29c69ddf2
+boot SHA256:        5752b69852df2152b2b04c68ecc17b57a7dbdb60c7a700c93c9b897f13724dda
 vendor_boot SHA256: 19798a67e7dc1d23073ac4b9731e42ef7a744b8c03b3a1fef385b00d4a4d22cb
 ```
 

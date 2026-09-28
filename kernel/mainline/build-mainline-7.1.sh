@@ -28,9 +28,22 @@ make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     --enable DRM_SPRD \
     --enable DRM_FBDEV_EMULATION \
     --enable BACKLIGHT_CLASS_DEVICE \
+    --enable MEDIA_SUPPORT \
+    --enable VIDEO_DEV \
+    --enable V4L2_FWNODE \
+    --disable MEDIA_SUBDRV_AUTOSELECT \
+    --disable MEDIA_ANALOG_TV_SUPPORT \
+    --disable MEDIA_DIGITAL_TV_SUPPORT \
+    --disable MEDIA_RADIO_SUPPORT \
+    --disable MEDIA_SDR_SUPPORT \
+    --disable MEDIA_CEC_SUPPORT \
+    --disable MEDIA_USB_SUPPORT \
+    --disable MEDIA_PLATFORM_SUPPORT \
     --enable DRM_PANEL_GENERIC_DSI \
     --enable TOUCHSCREEN_HIMAX_HX83112B \
     --enable CHARGER_BQ256XX \
+    --enable VIDEO_HI556 \
+    --enable VIDEO_HI846 \
     --enable DRM_PANEL_HIMAX_HX83102
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE="$cross" olddefconfig
