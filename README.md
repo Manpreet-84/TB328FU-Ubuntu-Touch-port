@@ -48,6 +48,8 @@ Android-independent plan.
 - `docs/known-good-baseline.md` — frozen V96 service state and validation boundary.
 - `docs/suspend-status.md` — measured deep-suspend and wake-source evidence.
 - `tools/verify-working-state.sh` — read-only camera/Bluetooth/battery health check.
+- `tools/unlock-tb328fu-s200162.ps1` — guarded FU-only bootloader unlock/recovery workflow.
+- `docs/unlock-tb328fu-s200162.md` — minimal prerequisites and failure recovery.
 - `kernel/build-donor.sh` — reproducible ARM64 donor-kernel build.
 - `kernel/patches/` — small reviewable UMS512/TB328FU patch series.
 - `ROADMAP.md` — staged removal of Android userspace dependencies.

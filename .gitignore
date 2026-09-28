@@ -35,6 +35,8 @@ device-capture*/
 
 # Local tooling.
 out/
+tools/unlock-assets/
+tools/tb328fu-unlock-backup-*/
 .vscode/
 .idea/
 __pycache__/
