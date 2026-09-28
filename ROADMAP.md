@@ -1,6 +1,6 @@
 # Android-independent Linux roadmap
 
-## Progress snapshot (2026-09-25)
+## Progress snapshot (2026-09-28)
 
 - Halium/Android-backed Ubuntu Touch daily-driver: about 75–85%.
 - Independent kernel with basic hardware: about 25–35%.
@@ -61,4 +61,10 @@ First kernel target is SC2355 Wi-Fi deep-suspend ordering. Donor source already
 places firmware suspend/resume handshake in SDIO `power_notify`, while bus is
 alive. Build now checks this invariant. Daily-driver keeps deep sleep inhibited
 until native-kernel test proves resume safe.
+
+The Linux 7.1 path has progressed further offline: a TB328FU DTB and paired
+Android-v4-format research images build reproducibly with Lenovo display,
+touch, brightness, keys, hall switch and battery data. They are not authorized
+for flashing; the remaining prerequisite is a recoverable boot path that loads
+the matching kernel and DTB together.
 

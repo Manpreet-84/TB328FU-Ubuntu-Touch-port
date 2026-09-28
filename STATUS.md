@@ -1,6 +1,6 @@
 # Port status
 
-Updated: 2026-09-25
+Updated: 2026-09-28
 
 ## Latest verified baseline
 
@@ -63,14 +63,15 @@ Confirmed working:
   proxy for the Unisoc UART; P2961 headphones paired and A2DP playback worked
   in a live RAM-only vendor-initialization test on 2026-09-22.
 
-On 2026-09-22, `bluetoothctl` saw nearby devices and `hci0` powered on.
+During the initial 2026-09-22 investigation, `bluetoothctl` saw nearby devices
+and `hci0` powered on.
 Windows on the user's PC could see the tablet, but Add device failed or hung
 at Connecting. Neither BlueZ nor the controller proxy reported a completed
 pairing; no paired device appeared on either Bluetooth stack. A `btmon` trace
 confirmed the controller accepts inquiry/page-scan enable with HCI success,
 but did not capture an incoming connection attempt during the Windows test.
-The PC itself did not appear in the tablet's scan. This leaves pairing
-unresolved; do not describe Bluetooth as connected or audio-capable. Tablet
+The PC itself did not appear in the tablet's scan. Pairing was unresolved at
+this stage; the later headphone tests below supersede this result. Tablet
 discoverability was turned back off after the test, while the HCI proxy and
 Bluetooth service remained running.
 
@@ -83,7 +84,7 @@ Complete event gave status `0x04` (page timeout). A separate low-level
 `hcitool cc` attempt failed with the same `0x04`, before authentication or any
 audio profile negotiation. No ACL packets or successful bonds were observed.
 This points to a controller/baseband connection problem, not a PulseAudio/A2DP
-configuration issue, although its exact firmware/transport cause is unproven.
+configuration issue; the later vendor-initialization test below resolved it.
 No Bluetooth proxy or firmware changes were made during these tests.
 Read-only inspection found the stock Android `libbt-vendor.so` exposes
 `marlin3_lite_init`, RF and PSKEY preload functions and uses the vendor
@@ -180,8 +181,9 @@ research tree's `native-bt-module/README.md`.
 
 The separate Wayland test player also works, but is no longer required for
 ordinary Files playback. Neither path fixes the underlying hardware codec.
-Stock Camera video-mode freezing is under investigation. A valid MP4 may be
-written even when the UI hangs on Stop. Do not treat stock recording as reliable.
+The unpatched stock Camera audio path can freeze video recording. A valid MP4
+may be written even when the UI hangs on Stop; the active persistent workaround
+avoids that path and produces the verified Gallery clip described above.
 The Start freeze has been traced to a synchronous `android_recorder_start()`
 call in `AalMediaRecorderControl::startRecording()`. In one Stop freeze,
 `android_recorder_stop()` and `android_recorder_reset()` returned and the MP4
@@ -207,10 +209,9 @@ captures the mic, AAC-encodes it with GStreamer, and creates a separate
 2026-09-22 confirmed responsive Camera and video plus voice in native Gallery.
 A second clap test played with sound in Files Preview and was reported roughly
 in sync. Gallery shows both the original silent clip and the `-with-audio` copy
-without filenames, so selecting the silent copy is easy. The bridge and patch
-are experimental, manually started, and not enabled at boot. A permanent fix
-still requires replacing or restoring Android recorder audio integration and
-repeat testing.
+without filenames, so selecting the silent copy is easy. The installed bridge
+now atomically replaces the silent intermediate and is persistent. A native fix
+still requires replacing or restoring Android recorder audio integration.
 
 ## Current blockers
 
@@ -223,8 +224,8 @@ repeat testing.
    this board and its vendor modules.
 4. Native DRM/KMS, ALSA routing, sensor IIO, Bluetooth HCI, V4L2 codecs and camera
    ISP support are required to remove the Android runtime.
-5. Deep suspend starts, but USB MUSB IRQ 58 and an SC2730 PMIC parent IRQ can wake
-   the device immediately.
+5. Deep suspend and power-key wake work, but vendor SC2355 Wi-Fi cannot resume;
+   the daily-driver therefore keeps deep sleep inhibited.
 
 ## Independent-kernel phase (2026-09-25)
 
@@ -249,6 +250,13 @@ reflashing the verified image. Pstore contained no record and the diagnostic
 cache marker was absent, so initramfs `/init` never ran. Boot header version and
 v4 signature size match V96. Current boundary is pre-userspace: early donor
 kernel/board-DT compatibility or bootloader handoff.
+
+The parallel Linux 7.1 board port now builds offline with the exact Lenovo BOE
+panel sequence, native DCS brightness, HX83102E touch support, system keys,
+hall switch and Lenovo battery profile. Storage, USB and SC2355 WCN retain the
+proven UMS512 reference wiring. This is build proof only: the resulting kernel
+and DTB have not booted on TB328FU, and charging, native audio, cameras and the
+sensor hub remain disabled or unported.
 
 ## Sensor facts
 
