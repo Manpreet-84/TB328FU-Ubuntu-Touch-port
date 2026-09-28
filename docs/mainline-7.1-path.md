@@ -116,6 +116,11 @@ DT node remains disabled. The SAR firmware identifies an AW96105A at `0x12`.
 Its upstream driver exists, but the exact supply rail is not yet proven, so no
 unsafe supply guess has been added.
 
+The disabled native sound-card description now carries Lenovo's complete
+SC2730 microphone/headphone/speaker routing and both external-PA GPIOs (97 and
+131), replacing the donor handheld's single GPIO9 amplifier control. Audio
+stays disabled until AUDCP firmware loading and muted startup can be tested.
+
 This is build proof, not boot proof. Placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
 
@@ -125,9 +130,9 @@ kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
 Image SHA256:       e899d20f985fbdcc2b2a82a95e73e5b08d864f6479f31cbd0fa0cfc2e710f034
-DTB SHA256:         7f2c7e3329636287049f6d5cace5d817c1fd255e5a0da9e873db7297bd96eee6
+DTB SHA256:         6f5a8381fb21e833bbca0c7b7df8a5abb36b0007fbbbf2a25b9dab37e02d9115
 boot SHA256:        ca30fb8ca06670e37032a2b266c1f594e518e2ab3188a21ae66865a29c69ddf2
-vendor_boot SHA256: 96939b239b577f247c8265b9ddaa01a28f195c92892222f81387c8eb9dec985b
+vendor_boot SHA256: 19798a67e7dc1d23073ac4b9731e42ef7a744b8c03b3a1fef385b00d4a4d22cb
 ```
 
 The builder accepts only the exact backed-up live `vendor_boot_b` template

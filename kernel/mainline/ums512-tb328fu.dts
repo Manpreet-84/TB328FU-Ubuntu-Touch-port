@@ -420,10 +420,19 @@
 &sound_vbc_v4_sprd_codec {
 	status = "disabled";
 	sprd-audio-card,routing =
+		"HPMIC Pin", "HP Mic Jack",
+		"MIC Pin", "Mic Jack",
+		"MIC2 Pin", "Aux Mic Jack",
+		"HeadPhone Jack", "HP Pin",
 		"Ext Spk", "HP Pin",
-		"Ext Spk1", "HP Pin";
-	sprd,spk-ext-pa-info = <0 0 4 0>;
-	sprd,spk-ext-pa-gpio = <&ap_gpio 9 1>;
+		"Ext Spk1", "HP Pin",
+		"Ext Spk", "SPK Pin",
+		"Ext Spk1", "SPK Pin",
+		"Ext Ear", "EAR Pin",
+		"Ext Ear", "SPK Pin",
+		"Ext Ear", "HP Pin";
+	sprd,spk-ext-pa-info = <0 0 3 0 1 0 3 0>;
+	sprd,spk-ext-pa-gpio = <&ap_gpio 97 0 &ap_gpio 131 0>;
 };
 
 &pinctrl {
