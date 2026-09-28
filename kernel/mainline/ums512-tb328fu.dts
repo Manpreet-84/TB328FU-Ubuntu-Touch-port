@@ -359,24 +359,24 @@
 
 	bat: battery {
 		compatible = "simple-battery";
-		charge-full-design-microamp-hours = <1900000>;
-		charge-term-current-microamp = <120000>;
-		constant-charge-voltage-max-microvolt = <4340000>;
-		factory-internal-resistance-micro-ohms = <230000>;
-		voltage-min-design-microvolt = <3410000>;
+		charge-full-design-microamp-hours = <5000000>;
+		charge-term-current-microamp = <240000>;
+		constant-charge-voltage-max-microvolt = <4432000>;
+		factory-internal-resistance-micro-ohms = <151000>;
+		voltage-min-design-microvolt = <3457000>;
 		operating-range-celsius = <0 60>;
 		ocv-capacity-celsius = <25>;
-		ocv-capacity-table-0 = <4338000 100>, <4243000 95>,
-			<4189000 90>, <4143000 85>, <4102000 80>,
-			<4051000 75>, <4002000 70>, <3958000 65>,
-			<3901000 60>, <3840000 55>, <3784000 50>,
-			<3742000 45>, <3703000 40>, <3673000 35>,
-			<3656000 30>, <3622000 25>, <3595000 20>,
-			<3558000 15>, <3523000 10>, <3490000 5>,
-			<3412000 0>;
+		ocv-capacity-table-0 = <4386000 100>, <4328000 95>,
+			<4270000 90>, <4211000 85>, <4153000 80>,
+			<4098000 75>, <4048000 70>, <4000000 65>,
+			<3957000 60>, <3897000 55>, <3862000 50>,
+			<3837000 45>, <3816000 40>, <3800000 35>,
+			<3785000 30>, <3768000 25>, <3749000 20>,
+			<3723000 15>, <3694000 10>, <3683000 5>,
+			<3400000 0>;
 
-		resistance-temp-table = <45 98>, <25 97>, <10 97>,
-			<0 97>, <(-10) 98>, <(-20) 98>;
+		resistance-temp-table = <45 100>, <25 100>, <10 248>,
+			<0 662>, <(-10) 662>, <(-20) 662>;
 
 		voltage-temp-table = <1095000 (-200)>, <986000 (-150)>,
 			<878000 (-100)>, <775000 (-50)>, <678000 0>,

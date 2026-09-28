@@ -104,6 +104,11 @@ Lenovo's system inputs are also mapped: PMIC EIC 1 power, PMIC EIC 4 volume
 down, AP GPIO 124 volume up and AP GPIO 130 hall-cover switch. The unrelated
 RG donor gamepad remains disabled.
 
+The battery description now uses Lenovo's installed 5,000 mAh, 4.432 V
+capacity, OCV and temperature-resistance data instead of the donor handheld's
+pack. Charging and the fuel gauge remain disabled until their native drivers
+and wiring can be validated on hardware.
+
 This is build proof, not boot proof. It must be paired with its DTB through
 the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
@@ -114,9 +119,9 @@ kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
 Image SHA256:       c7768fe539fa03d5ff5d89b98beb9ae372bb5c6759f7093a87353df2638ab0b8
-DTB SHA256:         4389ac8025110ab7d48dde5d004d8bff66afec6eab98db0e18d2859693ceb035
-boot SHA256:        8d983d221fd381361ec5cf159d70e281b85fd12d36c2434f40e9dab3b1802e51
-vendor_boot SHA256: 223d08b7b2023e6494ebe45212b7190ee56ab13e155c2255066dd6c407fdda6a
+DTB SHA256:         f5483af918ac901d438a475dcf97e985c1bc13dc2ebe364b4fd8aa866942cdb7
+boot SHA256:        388076a981ae6d74fbb36b53e8db0463648836f79ee6bcb175289ee2d96ba17f
+vendor_boot SHA256: 16a96b32d8f17c4f38ae8e29cbd3f8214dd0d822ad5450d4ac9b745761da7717
 ```
 
 These are paired research artifacts only. `fastboot boot` cannot provide the
