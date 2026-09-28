@@ -68,4 +68,3 @@ UNLOCK RECORD VERIFIED; ORIGINAL UBOOT_B VERIFIED.
 
 Android Recovery may then require **Factory data reset** for
 `init_user0_failed`. Never relock after installing modified images.
-
