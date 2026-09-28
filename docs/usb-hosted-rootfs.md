@@ -24,3 +24,13 @@ boot`; do not flash it.
 The next step is a small diagnostic initramfs that creates the ECM gadget,
 assigns a fixed USB address, and writes an observable marker before attempting
 an NFS mount.
+
+## RAM-only result
+
+`fastboot boot` accepted the image, but the tablet returned to fastboot before
+the initramfs exposed ADB or USB Ethernet. A normal start then held at the
+Lenovo logo. Reflashing the verified V96 image to `boot_a` recovered Ubuntu
+without touching userdata.
+
+Do not build the NFS initramfs yet: first solve the donor kernel's pre-init
+boot incompatibility. The USB/NFS configuration itself compiled successfully.
