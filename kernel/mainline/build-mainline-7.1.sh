@@ -30,6 +30,7 @@ make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     --enable BACKLIGHT_CLASS_DEVICE \
     --enable DRM_PANEL_GENERIC_DSI \
     --enable TOUCHSCREEN_HIMAX_HX83112B \
+    --enable CHARGER_BQ256XX \
     --enable DRM_PANEL_HIMAX_HX83102
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE="$cross" olddefconfig

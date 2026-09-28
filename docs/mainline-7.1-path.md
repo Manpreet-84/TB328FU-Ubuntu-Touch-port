@@ -34,8 +34,9 @@ touch       Himax hxcommon, I2C3 address 0x48
 hall        GPIO 130, supplied by vddgen0
 Wi-Fi/BT    Marlin3Lite / SC2355 SDIO
 microSD     SDIO0, EIC 19 card detect, vddsdcore + vddsdio rails
+charger     TI BQ25601D, I2C2 address 0x6b (live REG0B = 0x11)
+SAR         Awinic AW96105A, I2C2 address 0x12, IRQ AP GPIO90
 cameras     main I2C0 0x5a, front I2C1 0x6e
-SAR         Awinic AW9610X, I2C2 address 0x12
 PMIC        SC2730
 SoC/board   UMS512-1H10 / T610 Wi-Fi-only SKU
 ```
@@ -109,6 +110,12 @@ capacity, OCV and temperature-resistance data instead of the donor handheld's
 pack. Charging and the fuel gauge remain disabled until their native drivers
 and wiring can be validated on hardware.
 
+Live I2C and register evidence also replaces the donor AW32257 charger with the
+tablet's BQ25601D at I2C2 address `0x6b`; its upstream driver builds in, but the
+DT node remains disabled. The SAR firmware identifies an AW96105A at `0x12`.
+Its upstream driver exists, but the exact supply rail is not yet proven, so no
+unsafe supply guess has been added.
+
 This is build proof, not boot proof. Placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
 
@@ -117,10 +124,10 @@ diagnostic pair. Both images independently unpack and reproduce the intended
 kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
-Image SHA256:       c7768fe539fa03d5ff5d89b98beb9ae372bb5c6759f7093a87353df2638ab0b8
-DTB SHA256:         f5483af918ac901d438a475dcf97e985c1bc13dc2ebe364b4fd8aa866942cdb7
-boot SHA256:        1f051bd7b48ba1c348208596e4c3dfbd80f7b6a6f7f2c2fbd2c3bd700a9487bd
-vendor_boot SHA256: 41b657bc60d9b30442dee46c4c6e3a80d4dd783dcb7528c99c72a7ef0b4edfc0
+Image SHA256:       e899d20f985fbdcc2b2a82a95e73e5b08d864f6479f31cbd0fa0cfc2e710f034
+DTB SHA256:         7f2c7e3329636287049f6d5cace5d817c1fd255e5a0da9e873db7297bd96eee6
+boot SHA256:        ca30fb8ca06670e37032a2b266c1f594e518e2ab3188a21ae66865a29c69ddf2
+vendor_boot SHA256: 96939b239b577f247c8265b9ddaa01a28f195c92892222f81387c8eb9dec985b
 ```
 
 The builder accepts only the exact backed-up live `vendor_boot_b` template

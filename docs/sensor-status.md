@@ -1,6 +1,6 @@
 # TB328FU sensor status
 
-Updated: 2026-09-23
+Updated: 2026-09-28
 
 This inventory is based on the saved LineageOS sensor-service dump, kernel logs,
 input-device listing and Ubuntu Touch test results. It does not infer hardware
@@ -14,7 +14,7 @@ from generic kernel configuration alone.
 | Ambient-light sensor | `android.sensor.light`, handles `0x05` and `0x37` | Live lux values work; automatic-brightness policy remains incomplete | Present in the sensor HAL and previously observed through sensorfw. |
 | Proximity sensor | `android.sensor.proximity`, handle `0x3a` | Exposed through sensorfw; application and blanking behaviour still needs a repeatable test | HAL registration and kernel sensor-hub commands are present. |
 | Hall-cover sensor | Linux input device `hall-switch-input` | Not yet integrated with Lomiri cover/sleep policy | Present in the captured Android input-device list. |
-| Capacitive SAR sensor | Linux input device `aw9610x_sar` | Not expected to have a normal user-facing UI | Present in the captured Android input-device list. It is normally used for radio exposure/power policy. |
+| Capacitive SAR sensor | AW96105A at I2C2 `0x12`, Linux input device `aw9610x_sar` | Not expected to have a normal user-facing UI | Live firmware header identifies `AW96105A`; interrupt is AP GPIO90. It is normally used for radio exposure/power policy. |
 
 ## Sensor-hub software interfaces
 

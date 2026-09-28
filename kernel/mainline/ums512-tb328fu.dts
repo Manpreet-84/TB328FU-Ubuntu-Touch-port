@@ -833,11 +833,16 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 
-	speaker_amp: audio-codec@58 {
-		/* Anbernic reused a previously mainlined awinic 87xxx amp */
-		compatible = "anbernic,rgds-amp";
-		reg = <0x58>;
-		sound-name-prefix = "Speaker Amp";
+	charger: charger@6b {
+		/* Live REG0B=0x11 identifies the tablet's BQ25601D. */
+		compatible = "ti,bq25601d";
+		reg = <0x6b>;
+		monitored-battery = <&bat>;
+		status = "disabled";
+
+		usb_otg_vbus: usb-otg-vbus {
+			regulator-name = "usb-otg-vbus";
+		};
 	};
 };
 
@@ -865,28 +870,6 @@
 	pinctrl-0 = <&i2c4_pin_func &i2c4_pin_misc>;
 	#address-cells = <1>;
 	#size-cells = <0>;
-
-	charger: charger@6a {
-		compatible = "awinic,aw32257";
-		reg = <0x6a>;
-		monitored-battery = <&bat>;
-		fuel-gauge = <&sc2730_fgu>;
-		ti,current-limit = <1800>;
-		ti,weak-battery-voltage = <3400>;
-		ti,battery-regulation-voltage = <4340>;
-		/*
-		 * ~0.65C, deliberately below the 1984mA (1.04C) this pack and
-		 * charger are both capable of. Raise this back to 2000 only
-		 * once proper JEITA thermal limiting exists.
-		 */
-		ti,charge-current = <1240>;
-		ti,termination-current = <200>;
-		ti,resistor-sense = <33>;
-
-		usb_otg_vbus: usb-otg-vbus {
-			regulator-name = "usb-otg-vbus";
-		};
-	};
 };
 
 &sdio0 {
