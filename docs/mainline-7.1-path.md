@@ -126,4 +126,15 @@ vendor_boot SHA256: 41b657bc60d9b30442dee46c4c6e3a80d4dd783dcb7528c99c72a7ef0b4e
 The builder accepts only the exact backed-up live `vendor_boot_b` template
 (SHA-256 `b95c4cae0ebed9162dab49f1bdbdd1daaddc10f86f9d3bf1d9f3a4b5c7530922`).
 These are paired research artifacts only. `fastboot boot` cannot provide the
-matching `vendor_boot`, and neither image is authorized for flashing yet.
+matching `vendor_boot`; use only the controlled paired-slot procedure below.
+
+## Paired slot-B result — 2026-09-28
+
+The exact pair above was written to `boot_b` and `vendor_boot_b` after checking
+partition sizes and rollback hashes. Selecting B returned directly to fastboot;
+no diagnostic USB device or initramfs appeared. Both B partitions were restored
+from their verified backups, slot A was selected, and V96 returned with ADB.
+
+Because this test supplied the matching TB328FU DTB, the remaining blocker is
+before normal Linux or DT probing: the upgraded bootloader's image validation,
+loading, or kernel-entry contract. Do not repeat this pair unchanged.
