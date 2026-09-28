@@ -30,10 +30,11 @@ chmod 0755 "$work/root/init" "$work/root/bin/busybox"
 for applet in sh mount umount mkdir mknod cat uname setsid cttyhack sleep sync ls head ln; do
     ln -sf busybox "$work/root/bin/$applet"
 done
+find "$work/root" -exec touch -h -d '@0' {} +
 
 (
     cd "$work/root"
-    find . -print0 | cpio --null -o --format=newc --owner=0:0 2>/dev/null |
+    find . -print0 | cpio --null -o --format=newc --owner=0:0 --reproducible 2>/dev/null |
         lz4 -l -9 -c
 ) >"$work/ramdisk.lz4"
 

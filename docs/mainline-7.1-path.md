@@ -33,7 +33,7 @@ panel       BOE HX83102E, 1200x2000, three listed revisions
 touch       Himax hxcommon, I2C3 address 0x48
 hall        GPIO 130, supplied by vddgen0
 Wi-Fi/BT    Marlin3Lite / SC2355 SDIO
-microSD     SDIO0, EIC 19 card detect, vddsdcore + vddsdio rails
+microSD     Generic overlay describes SDIO0, but production tablet has no slot
 cameras     main I2C0 0x5a, front I2C1 0x6e
 SAR         Awinic AW9610X, I2C2 address 0x12
 PMIC        SC2730
@@ -51,17 +51,13 @@ TB328FU base DTB plus overlay 1.
 The stock Android 12 U-Boot v4 flow always obtains its FDT from installed
 `vendor_boot`. `fastboot boot` sends only `boot.img`, so it cannot safely test a
 new mainline DTB by itself. The proven external project solves this with a
-custom vendor U-Boot and an extlinux microSD development path.
+custom vendor U-Boot and an extlinux microSD development path, but TB328FU has
+no microSD slot.
 
-Do not flash a mainline boot image alone. First build the TB328FU DTS and
-initramfs offline, then choose one recoverable paired test path:
-
-1. custom U-Boot/extlinux from microSD while retaining V96 on eMMC; or
-2. a deliberately paired `boot` + `vendor_boot` slot experiment with verified
-   backups and FDL recovery.
-
-The microSD/extlinux route is preferred because kernel/DT changes do not touch
-the working Ubuntu installation.
+Do not flash a mainline boot image alone. The remaining practical route is a
+deliberately paired `boot_b` + `vendor_boot_b` experiment with verified backups
+and FDL recovery, while leaving slot A's V96 boot chain untouched. Both images
+must be restored as a pair after any failed test.
 
 ## Initial TB328FU build
 
@@ -77,8 +73,8 @@ Image SHA256: 1795be9ca2d2717b01eb1212ebdde00f5474c2c325cd93535dcd266c8644c593
 DTB SHA256:   a600ae3855d1fbd0067547a88f415a20eac624cabc075fe6d467f8c23fca13d9
 ```
 
-The microSD and eMMC PHY timing values now come from TB328FU's installed
-DTBO overlay 1 rather than the donor RG board.
+The eMMC PHY timing values come from TB328FU's installed DTBO overlay 1. SDIO0
+is disabled because the production tablet has no removable microSD slot.
 
 Live inspection identifies the touch IC more precisely as HX83102E with
 firmware `0x8203`. The phase-1 DTS enables I2C3 at Lenovo's 1 MHz rate, EIC
@@ -109,8 +105,7 @@ capacity, OCV and temperature-resistance data instead of the donor handheld's
 pack. Charging and the fuel gauge remain disabled until their native drivers
 and wiring can be validated on hardware.
 
-This is build proof, not boot proof. It must be paired with its DTB through
-the microSD/extlinux U-Boot route; placing only the Image in Android boot v4
+This is build proof, not boot proof. Placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
 
 `kernel/mainline/build-v4-pair.sh` also creates an offline Android-v4-format
@@ -119,10 +114,12 @@ kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
 Image SHA256:       c7768fe539fa03d5ff5d89b98beb9ae372bb5c6759f7093a87353df2638ab0b8
-DTB SHA256:         f5483af918ac901d438a475dcf97e985c1bc13dc2ebe364b4fd8aa866942cdb7
-boot SHA256:        388076a981ae6d74fbb36b53e8db0463648836f79ee6bcb175289ee2d96ba17f
-vendor_boot SHA256: 16a96b32d8f17c4f38ae8e29cbd3f8214dd0d822ad5450d4ac9b745761da7717
+DTB SHA256:         8aaae14a73e9392cf8a27e6cde9424c28d9bd48c716dec9398521f767159fecf
+boot SHA256:        1f051bd7b48ba1c348208596e4c3dfbd80f7b6a6f7f2c2fbd2c3bd700a9487bd
+vendor_boot SHA256: 3281ebf964a906e5b170ad039ac306fcfc9cbbcb77ed4a0de15e0b7b924f5e51
 ```
 
+The builder accepts only the exact backed-up live `vendor_boot_b` template
+(SHA-256 `b95c4cae0ebed9162dab49f1bdbdd1daaddc10f86f9d3bf1d9f3a4b5c7530922`).
 These are paired research artifacts only. `fastboot boot` cannot provide the
 matching `vendor_boot`, and neither image is authorized for flashing yet.
