@@ -890,8 +890,7 @@
 };
 
 &sdio0 {
-	/* The production TB328FU chassis has no removable microSD slot. */
-	status = "disabled";
+	status = "okay";
 	vmmc-supply = <&vddsdcore>;
 	vqmmc-supply = <&vddsdio>;
 	cd-gpios = <&eic_sync 19 GPIO_ACTIVE_LOW>;

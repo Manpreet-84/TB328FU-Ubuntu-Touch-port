@@ -33,7 +33,7 @@ panel       BOE HX83102E, 1200x2000, three listed revisions
 touch       Himax hxcommon, I2C3 address 0x48
 hall        GPIO 130, supplied by vddgen0
 Wi-Fi/BT    Marlin3Lite / SC2355 SDIO
-microSD     Generic overlay describes SDIO0, but production tablet has no slot
+microSD     SDIO0, EIC 19 card detect, vddsdcore + vddsdio rails
 cameras     main I2C0 0x5a, front I2C1 0x6e
 SAR         Awinic AW9610X, I2C2 address 0x12
 PMIC        SC2730
@@ -51,13 +51,17 @@ TB328FU base DTB plus overlay 1.
 The stock Android 12 U-Boot v4 flow always obtains its FDT from installed
 `vendor_boot`. `fastboot boot` sends only `boot.img`, so it cannot safely test a
 new mainline DTB by itself. The proven external project solves this with a
-custom vendor U-Boot and an extlinux microSD development path, but TB328FU has
-no microSD slot.
+custom vendor U-Boot and an extlinux microSD development path.
 
-Do not flash a mainline boot image alone. The remaining practical route is a
-deliberately paired `boot_b` + `vendor_boot_b` experiment with verified backups
-and FDL recovery, while leaving slot A's V96 boot chain untouched. Both images
-must be restored as a pair after any failed test.
+Do not flash a mainline boot image alone. Two paired routes remain:
+
+1. custom U-Boot/extlinux from microSD while retaining V96 on eMMC; or
+2. a deliberately paired `boot_b` + `vendor_boot_b` experiment with verified
+   backups and FDL recovery.
+
+The microSD route is safer, but no card is currently available. An eMMC test
+must leave slot A's V96 boot chain untouched and restore both slot-B images as
+a pair after any failure.
 
 ## Initial TB328FU build
 
@@ -73,8 +77,8 @@ Image SHA256: 1795be9ca2d2717b01eb1212ebdde00f5474c2c325cd93535dcd266c8644c593
 DTB SHA256:   a600ae3855d1fbd0067547a88f415a20eac624cabc075fe6d467f8c23fca13d9
 ```
 
-The eMMC PHY timing values come from TB328FU's installed DTBO overlay 1. SDIO0
-is disabled because the production tablet has no removable microSD slot.
+The microSD and eMMC PHY timing values come from TB328FU's installed DTBO
+overlay 1 rather than the donor RG board.
 
 Live inspection identifies the touch IC more precisely as HX83102E with
 firmware `0x8203`. The phase-1 DTS enables I2C3 at Lenovo's 1 MHz rate, EIC
@@ -114,9 +118,9 @@ kernel, initramfs, DTB and vendor ramdisk:
 
 ```text
 Image SHA256:       c7768fe539fa03d5ff5d89b98beb9ae372bb5c6759f7093a87353df2638ab0b8
-DTB SHA256:         8aaae14a73e9392cf8a27e6cde9424c28d9bd48c716dec9398521f767159fecf
+DTB SHA256:         f5483af918ac901d438a475dcf97e985c1bc13dc2ebe364b4fd8aa866942cdb7
 boot SHA256:        1f051bd7b48ba1c348208596e4c3dfbd80f7b6a6f7f2c2fbd2c3bd700a9487bd
-vendor_boot SHA256: 3281ebf964a906e5b170ad039ac306fcfc9cbbcb77ed4a0de15e0b7b924f5e51
+vendor_boot SHA256: 41b657bc60d9b30442dee46c4c6e3a80d4dd783dcb7528c99c72a7ef0b4edfc0
 ```
 
 The builder accepts only the exact backed-up live `vendor_boot_b` template
