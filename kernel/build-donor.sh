@@ -23,7 +23,7 @@ export KBUILD_BUILD_USER=tb328fu
 export KBUILD_BUILD_HOST=builder
 export KBUILD_BUILD_TIMESTAMP="$(git -C "$source_dir" show -s --format=%cI "$base")"
 
-for patch_file in "$repo_dir"/kernel/patches/*.patch; do
+for patch_file in "$repo_dir"/kernel/patches/0001-ums512-minimum-build-fixes.patch; do
     if git -C "$source_dir" apply --check "$patch_file" 2>/dev/null; then
         git -C "$source_dir" apply "$patch_file"
     elif ! git -C "$source_dir" apply --reverse --check "$patch_file" 2>/dev/null; then
