@@ -128,6 +128,18 @@ the kernel. Direct sensor DT nodes remain deferred because Lenovo's generic
 CCI addresses, MIPI lane maps or link frequencies; the native UMS512 ISP/media
 controller must also be completed before those drivers can stream frames.
 
+Read-only inspection of Lenovo's installed sensor libraries confirms that both
+sensors use a 24 MHz master clock. The live DT supplies rear reset GPIO44,
+power-down GPIO46 and PHY0 (four lanes), while the front uses reset GPIO45,
+power-down GPIO40 and PHY3 (the main half of the 2+2 PHY). Lenovo's UMS512
+camera pipeline is the SharkL5Pro generation: CSI controllers are at
+0x62300000/0x62400000/0x62500000, ISP at 0x62000000 and three DCAM instances at
+0x62900000/0x62901000/0x62902000 with IRQs 57/58/59. Mainline currently has the
+newer UMS9230 camsys implementation only. Porting that driver to SharkL5Pro,
+including its clock/reset/syscon differences, is therefore the next native
+camera milestone; binding the sensors before it exists would not produce a
+usable capture device.
+
 This is build proof, not boot proof. Placing only the Image in Android boot v4
 would silently reuse the incompatible installed `vendor_boot` DTB.
 
