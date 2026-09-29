@@ -1,0 +1,2 @@
+# Dedicated experimental rootfs card; do not offer desktop automount/eject.
+SUBSYSTEM=="block", ENV{ID_FS_UUID}=="f24eab58-441e-4a6a-8021-6af03a1cf209", ENV{UDISKS_SYSTEM}="1", ENV{UDISKS_AUTO}="0", ENV{UDISKS_IGNORE}="1"
