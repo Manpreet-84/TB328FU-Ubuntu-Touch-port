@@ -26,3 +26,15 @@ The persistent probe is `/userdata/sd-root-probe.log`.
 
 Slot A retains V96. No SD-absent fallback test or repeated cold-boot validation
 has been performed yet. This is not an independent custom-kernel boot.
+
+## Cold-start failure (2026-09-29)
+
+After shutdown and power-on, slot B stayed at the Lenovo logo. Switching to
+slot A also stayed at the logo until the verified V96 image was flashed back to
+`boot_a` (SHA-256 `fa0655e8dc00ca2ff69bdb314094058f35a069267d1d3910a5ffbabfe4302486`).
+Ubuntu then booted on slot A with ADB, the V96 kernel, and active LightDM.
+The previous SD probe log still says `SD ROOT SELECTED`, but it was written
+during the earlier successful warm boot; it does not prove the cold boot
+reached the SD probe. No journal entry exists for the failed cold start.
+Treat the SD boot image as warm-boot-only until early boot evidence explains
+the cold-start failure. Do not set slot B active for normal use.
