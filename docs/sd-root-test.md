@@ -38,3 +38,23 @@ during the earlier successful warm boot; it does not prove the cold boot
 reached the SD probe. No journal entry exists for the failed cold start.
 Treat the SD boot image as warm-boot-only until early boot evidence explains
 the cold-start failure. Do not set slot B active for normal use.
+
+## Full-partition image test
+
+The failed SD test image and the V96 recovery flash were both 43,913,216-byte
+short images. The saved V96 `boot_a` partition is 67,108,864 bytes, and its
+first 43,913,216 bytes exactly match the short V96 image. Its final 64 bytes
+start with the `AVBf` footer magic. A short flash leaves the previous partition
+tail/footer in place. This is a plausible cause of the cold-start failure,
+not yet proof of bootloader behavior.
+
+On 2026-09-29 the full V96 `boot_a` backup (SHA-256
+`7cd0dfb12a9508c0a90cc882d33140230c78b24744ae438363d9f41ad8e526f8`)
+was flashed to A. Ubuntu booted, and the owner confirmed one subsequent cold
+start reached Ubuntu. A second cold start is pending confirmation.
+
+An unflashed `out/tb328fu-v96-sd-root-full.img` was built by copying the full
+V96 backup and overwriting only the initial 43,913,216 bytes with the SD test
+image. It is exactly 67,108,864 bytes, its prefix matches the SD test image,
+and its final 64 bytes retain `AVBf`. This image is experimental and has not
+been tested on the tablet.
