@@ -73,3 +73,16 @@ The next device test is isolated to `boot_b`; V96 remains the rollback image on
 `boot_a`. If it reaches diagnostic init, restore missing hardware options in
 small groups. If it fails before entry again, matching configuration and LTO
 are insufficient and the private Lenovo code/boot contract remains the blocker.
+
+## Device result
+
+The verified stock-config LTO image was flashed only to `boot_b` and slot B was
+selected. It remained on the static Lenovo logo with no framebuffer marker,
+USB enumeration, diagnostic-init marker or recoverable pstore record. The
+verified V96 image was then restored to `boot_a`; Ubuntu returned on kernel
+`5.4.233-android12-9-g79e86a50ca56`.
+
+Matching Lenovo's compiler family, LTO/CFI settings and near-stock image size
+is therefore insufficient. Do not repeat this image unchanged. Further work
+must target the 163 private-tree configuration/source differences or keep the
+accepted Lenovo kernel and move the experimental root filesystem to microSD.
