@@ -7,7 +7,7 @@ source_dir=${KERNEL_SOURCE:?set KERNEL_SOURCE to the UMS512 5.4 checkout}
 output_dir=${KERNEL_OUT:?set KERNEL_OUT to an empty build directory}
 seed_config=${KERNEL_CONFIG:?set KERNEL_CONFIG to the captured TB328FU config}
 clang_dir=${CLANG_DIR:?set CLANG_DIR to Android clang-r416183b/bin}
-fragment="$repo_dir/config/kernel/halium.config.fragment"
+fragment=${KERNEL_FRAGMENT-$repo_dir/config/kernel/halium.config.fragment}
 
 test "$(git -C "$source_dir" rev-parse HEAD)" = "$base" || {
     echo "wrong kernel revision; expected $base" >&2
@@ -23,7 +23,9 @@ export KBUILD_BUILD_USER=tb328fu
 export KBUILD_BUILD_HOST=builder
 export KBUILD_BUILD_TIMESTAMP="$(git -C "$source_dir" show -s --format=%cI "$base")"
 
-for patch_file in "$repo_dir"/kernel/patches/0001-ums512-minimum-build-fixes.patch; do
+for patch_file in \
+    "$repo_dir"/kernel/patches/0001-ums512-minimum-build-fixes.patch \
+    "$repo_dir"/kernel/patches/0008-omnivision-initialize-i2c-status.patch; do
     if git -C "$source_dir" apply --check "$patch_file" 2>/dev/null; then
         git -C "$source_dir" apply "$patch_file"
     elif ! git -C "$source_dir" apply --reverse --check "$patch_file" 2>/dev/null; then
@@ -33,9 +35,12 @@ for patch_file in "$repo_dir"/kernel/patches/0001-ums512-minimum-build-fixes.pat
 done
 
 cp "$seed_config" "$output_dir/.config"
-cp "$fragment" "$output_dir/tb328fu-halium.config"
-"$source_dir/scripts/kconfig/merge_config.sh" -m -O "$output_dir" \
-    "$output_dir/.config" "$output_dir/tb328fu-halium.config"
+if [ -n "$fragment" ]; then
+    test -f "$fragment" || { echo "kernel fragment not found" >&2; exit 1; }
+    cp "$fragment" "$output_dir/tb328fu-halium.config"
+    "$source_dir/scripts/kconfig/merge_config.sh" -m -O "$output_dir" \
+        "$output_dir/.config" "$output_dir/tb328fu-halium.config"
+fi
 
 make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     CROSS_COMPILE=aarch64-linux-gnu- CLANG_TRIPLE=aarch64-linux-gnu- \
@@ -51,4 +56,3 @@ make -C "$source_dir" O="$output_dir" ARCH=arm64 \
     STRIP="$clang_dir/llvm-strip" -j"$(getconf _NPROCESSORS_ONLN)" Image
 
 sha256sum "$output_dir/arch/arm64/boot/Image" "$output_dir/.config"
-

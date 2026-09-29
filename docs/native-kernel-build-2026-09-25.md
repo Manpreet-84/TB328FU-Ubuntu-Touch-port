@@ -97,3 +97,18 @@ full-container image is 67,108,864 bytes with SHA-256
 `ae144157f98141d2d3928df8637d890c979706fd7b648150fed45ebc42dc2aa7`;
 its kernel SHA-256 is
 `9d2d0c8f25db7fcd3110fdf42bef47cf60d7b7cc3506b91f08192aaba635598b`.
+
+## EFI framebuffer and stock-config follow-up
+
+Patch `0007-tb328fu-efi-framebuffer-marker.patch` paints the framebuffer at
+`0x9e000000` immediately after EFI entry. Its verified 64 MiB diagnostic image
+was flashed only to `boot_b`; the tablet showed the unchanged Lenovo logo and
+no magenta marker. V96 was restored successfully on `boot_a`. The result is
+consistent with pre-entry rejection, but the firmware may use another scanout
+buffer, so it is supporting evidence rather than proof.
+
+Binary comparison then found the working Lenovo and V96 kernels use the same
+config and exact 37,632,512-byte size, including Clang LTO and CFI. The earlier
+donor disabled both and differed in 240 config entries. A new LTO/CFI build
+using V96's extracted config completed at 37,888,512 bytes. Details and hashes
+are recorded in `docs/stock-kernel-binary-analysis-2026-09-29.md`.

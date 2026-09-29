@@ -1,0 +1,35 @@
+diff --git a/arch/arm64/kernel/efi-entry.S b/arch/arm64/kernel/efi-entry.S
+--- a/arch/arm64/kernel/efi-entry.S
++++ b/arch/arm64/kernel/efi-entry.S
+@@ -32,6 +32,7 @@ ENTRY(entry)
+ 	 */
+ 	stp	x29, x30, [sp, #-32]!
+ 	mov	x29, sp
++	bl	tb328fu_efi_fb_marker
+ 
+ 	/*
+ 	 * Call efi_entry to do the real work.
+@@ -118,3 +119,23 @@ efi_load_fail:
+ 
+ entry_end:
+ ENDPROC(entry)
++
++/* Paint the first MiB of Lenovo's boot framebuffer before DT parsing. */
++tb328fu_efi_fb_marker:
++	movz	x9, #0x9e00, lsl #16
++	movz	x11, #0x00ff
++	movk	x11, #0xff00, lsl #16
++	movk	x11, #0x00ff, lsl #32
++	movk	x11, #0xff00, lsl #48
++	movz	x12, #0x4000
++1:
++	stp	x11, x11, [x9]
++	stp	x11, x11, [x9, #16]
++	stp	x11, x11, [x9, #32]
++	stp	x11, x11, [x9, #48]
++	dc	cvac, x9
++	add	x9, x9, #64
++	subs	x12, x12, #1
++	b.ne	1b
++	dsb	sy
++	ret
